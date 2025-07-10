@@ -1,12 +1,6 @@
-<%-- 
-    Document   : bookDetail
-    Created on : Jul 4, 2025, 11:30:29 AM
-    Author     : Administrator
---%>
-
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -25,6 +19,8 @@
                 justify-content: space-between;
                 align-items: center;
                 padding: 10px 30px;
+            }
+            .header_top {
                 background: linear-gradient(90deg, #2193b0, #6dd5ed);
                 color: white;
                 font-size: 14px;
@@ -67,34 +63,32 @@
                 color: black;
                 text-decoration: none;
             }
-            .book-detail-wrapper {
-                display: flex;
-                flex-wrap: wrap;
-                padding: 15px;
-                align-items: flex-start;
-                gap: 30px;
+            .container {
                 max-width: 1200px;
                 margin: 30px auto;
                 background: #fff;
                 border-radius: 8px;
                 box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+                padding: 20px;
+            }
+            .book-detail-wrapper {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 30px;
             }
             .book-images {
                 flex: 0 0 35%;
-                max-width: 35%;
                 display: flex;
                 justify-content: center;
             }
             .book-images img {
                 width: 100%;
                 max-width: 250px;
-                object-fit: contain;
                 border-radius: 8px;
                 border: 1px solid #eee;
             }
             .book-info {
                 flex: 0 0 60%;
-                max-width: 60%;
             }
             .book-info h1 {
                 font-size: 28px;
@@ -107,36 +101,33 @@
                 gap: 15px;
                 margin-bottom: 10px;
             }
-            .book-prices .price-sale {
+            .price-sale {
                 font-size: 26px;
                 font-weight: bold;
                 color: #e53935;
             }
-            .book-prices .price-original {
+            .price-original {
                 font-size: 20px;
                 color: #888;
                 text-decoration: line-through;
             }
-            .book-prices .discount-badge {
+            .discount-badge {
                 background-color: #e53935;
                 color: white;
                 font-size: 14px;
                 padding: 3px 8px;
                 border-radius: 4px;
             }
-            .book-attributes {
+            .book-attributes p {
+                margin: 6px 0;
                 font-size: 15px;
-                color: #555;
-                line-height: 1.6;
-                margin-bottom: 10px;
             }
             .book-attributes strong {
                 display: inline-block;
                 width: 120px;
-                color: #333;
             }
             .book-description {
-                margin: 10px 0;
+                margin-top: 10px;
                 font-size: 15px;
                 color: #444;
                 line-height: 1.6;
@@ -144,10 +135,13 @@
             .book-buy-actions {
                 display: flex;
                 gap: 15px;
-                margin-top: 10px;
+                margin-top: 15px;
+            }
+            .book-buy-actions form {
+                flex: 1;
             }
             .book-buy-actions button {
-                flex: 1;
+                width: 100%;
                 padding: 12px;
                 font-size: 16px;
                 border: none;
@@ -155,46 +149,26 @@
                 cursor: pointer;
                 transition: 0.3s;
             }
-            .book-buy-actions .add-cart {
+            .add-cart {
                 background-color: #ff9800;
                 color: white;
             }
-            .book-buy-actions .buy-now {
+            .buy-now {
                 background-color: #e53935;
                 color: white;
             }
             .book-buy-actions button:hover {
                 opacity: 0.9;
             }
+
             @media (max-width: 768px) {
                 .book-detail-wrapper {
                     flex-direction: column;
-                    padding: 20px;
                 }
                 .book-images, .book-info {
-                    flex: 1 0 100%;
                     max-width: 100%;
                 }
-                .book-info h1 {
-                    font-size: 22px;
-                }
-                .book-prices .price-sale {
-                    font-size: 22px;
-                }
-                .book-buy-actions {
-                    flex-direction: column;
-                }
-                .book-buy-actions button {
-                    width: 100%;
-                }
             }
-
-            .container {
-                max-width: 900px;  /* hoặc 900px nếu muốn nhỏ hơn */
-                margin: 30px auto;
-                padding: 0 15px;    /* cho đệm hai bên khi màn hình nhỏ */
-            }
-
         </style>
     </head>
     <body>
@@ -209,7 +183,7 @@
                         <a href="${pageContext.request.contextPath}/logout">| Đăng xuất</a>
                     </c:when>
                     <c:otherwise>
-                        <a href="${pageContext.request.contextPath}/login">Đăng Nhập</a>
+                        <a href="${pageContext.request.contextPath}/login">Đăng nhập</a>
                         <a href="${pageContext.request.contextPath}/register">| Đăng ký</a>
                     </c:otherwise>
                 </c:choose>
@@ -218,69 +192,87 @@
 
         <div class="header_main">
             <a class="header_logo" href="${pageContext.request.contextPath}/home">
-                <img src="image/logo1.jpg" alt="Logo BookZone">
+                <img src="${pageContext.request.contextPath}/image/logo1.jpg" alt="BookZone Logo">
             </a>
             <form class="header_search-box" action="${pageContext.request.contextPath}/search" method="get">
                 <input type="text" class="search-input" name="query" placeholder="Tìm kiếm sách...">
                 <button type="submit" class="search-button">Tìm</button>
             </form>
             <div class="header_utilities">
-                <a href="${pageContext.request.contextPath}/offers">Ưu đãi & Tiện ích</a>
-                <a href="${pageContext.request.contextPath}/cart">🛒 Giỏ hàng (0)</a>
+                <c:set var="cartCount" value="0" />
+                <c:if test="${not empty sessionScope.cart}">
+                    <c:forEach var="item" items="${sessionScope.cart}">
+                        <c:set var="cartCount" value="${cartCount + item.quantity}" />
+                    </c:forEach>
+                </c:if>
+
+                <a href="${pageContext.request.contextPath}/offers"><strong>Ưu đãi&Tiện ích</strong></a>
+                <a href="${pageContext.request.contextPath}/cart"><strong>🛒 Giỏ hàng</strong> (${cartCount})</a>
             </div>
         </div>
 
         <!-- BOOK DETAIL -->
         <div class="container">
-        <div class="book-detail-wrapper">
-            <div class="book-images">
-                <img src="${book.imageURL}" alt="${book.title}">
-            </div>
-
-            <div class="book-info">
-                <h1>${book.title}</h1>
-
-                <c:set var="discountValue" value="${empty book.discount ? 0 : book.discount}" />
-                <c:set var="finalPrice" value="${book.price * (1 - discountValue / 100.0)}" />
-
-                <div class="book-prices">
-                    <c:choose>
-                        <c:when test="${discountValue > 0}">
-                            <span class="price-sale">
-                                <fmt:formatNumber value="${finalPrice}" type="number" groupingUsed="true" maxFractionDigits="0"/>đ
-                            </span>
-                            <span class="price-original">
-                                <fmt:formatNumber value="${book.price}" type="number" groupingUsed="true" maxFractionDigits="0"/>đ
-                            </span>
-                            <span class="discount-badge">-${discountValue}%</span>
-                        </c:when>
-                        <c:otherwise>
-                            <span class="price-sale">
-                                <fmt:formatNumber value="${book.price}" type="number" groupingUsed="true" maxFractionDigits="0"/>đ
-                            </span>
-                        </c:otherwise>
-                    </c:choose>
+            <div class="book-detail-wrapper">
+                <div class="book-images">
+                    <img src="${book.imageURL}" alt="${book.title}">
                 </div>
+                <div class="book-info">
+                    <h1>${book.title}</h1>
 
-                <div class="book-attributes">
-                    <p><strong>Mã sách (ID):</strong> ${book.id}</p>
-                    <p><strong>Tác giả:</strong> ${book.author}</p>
-                    <p><strong>Ngày thêm:</strong> <fmt:formatDate value="${book.created_at}" pattern="dd/MM/yyyy"/></p>
-                    <p><strong>Số lượng còn:</strong> ${book.quantity}</p>
-                </div>
+                    <c:set var="discountValue" value="${empty book.discount ? 0 : book.discount}" />
+                    <c:set var="finalPrice" value="${book.price * (1 - discountValue / 100.0)}" />
 
-                <div class="book-description">
-                    <strong>Mô tả:</strong> ${book.description}
-                </div>
+                    <div class="book-prices">
+                        <c:choose>
+                            <c:when test="${discountValue > 0}">
+                                <span class="price-sale">
+                                    <fmt:formatNumber value="${finalPrice}" type="number" groupingUsed="true" maxFractionDigits="0"/>đ
+                                </span>
+                                <span class="price-original">
+                                    <fmt:formatNumber value="${book.price}" type="number" groupingUsed="true" maxFractionDigits="0"/>đ
+                                </span>
+                                <span class="discount-badge">-${discountValue}%</span>
+                            </c:when>
+                            <c:otherwise>
+                                <span class="price-sale">
+                                    <fmt:formatNumber value="${book.price}" type="number" groupingUsed="true" maxFractionDigits="0"/>đ
+                                </span>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
 
-                <div class="book-buy-actions">
-                    <button class="add-cart">🛒 Thêm vào giỏ hàng</button>
-                    <button class="buy-now">Mua ngay</button>
+                    <div class="book-attributes">
+                        <p><strong>Mã sách:</strong> ${book.id}</p>
+                        <p><strong>Tác giả:</strong> ${book.author}</p>
+                        <p><strong>Ngày thêm:</strong> <fmt:formatDate value="${book.created_at}" pattern="dd/MM/yyyy"/></p>
+                        <p><strong>Số lượng còn:</strong> ${book.quantity}</p>
+                    </div>
+
+                    <div class="book-description">
+                        <strong>Mô tả:</strong> ${book.description}
+                    </div>
+
+                    <div class="book-buy-actions">
+                        <form action="${pageContext.request.contextPath}/cart" method="post" style="display: flex; gap: 10px; align-items: center;">
+                            <input type="hidden" name="bookId" value="${book.id}" />
+
+                            <label>
+                                <input type="number" name="quantity" value="1" min="1"
+                                       style="width: 60px; padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
+                            </label>
+
+                            <button type="submit" class="add-cart">🛒 Thêm vào giỏ hàng</button>
+                        </form>
+                        <form action="${pageContext.request.contextPath}/checkout" method="post">
+                            <input type="hidden" name="bookId" value="${book.id}" />
+                            <input type="hidden" name="quantity" value="1" />
+                            <button type="submit" class="buy-now">Mua ngay</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
     </body>
 </html>
-

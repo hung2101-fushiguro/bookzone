@@ -9,17 +9,18 @@ import java.util.List;
 
 public class BookDao implements IBookDAO {
 
-      private Connection connection;  // Khai báo đối tượng Connection
+    private Connection connection;  // Khai báo đối tượng Connection
 
     // Constructor nhận Connection từ DBConnection
     public BookDao(Connection connection) {
         this.connection = connection;
     }
+
     public BookDao() {
-        
+
     }
-    
-    private static final String INSERT_BOOK_SQL = "INSERT INTO Books (title, author, description, price, quantity, image_url, category_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+    private static final String INSERT_BOOK_SQL =  "INSERT INTO Books (title, author, description, price, quantity, image_url, category_id, created_at, discount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String SELECT_BOOK_BY_ID
             = "SELECT b.*, c.name AS category_name "
             + "FROM Books b "
@@ -28,7 +29,7 @@ public class BookDao implements IBookDAO {
 
     private static final String SELECT_ALL_BOOK = "SELECT * FROM Books";
     private static final String DELETE_BOOK_SQL = "DELETE FROM Books WHERE id = ?";
-    private static final String UPDATE_BOOK_SQL = "UPDATE Books SET title=?, author=?, description=?, price=?, quantity=?, image_url=?, category_id=?, created_at=? WHERE id=?";
+    private static final String UPDATE_BOOK_SQL = "UPDATE Books SET title=?, author=?, description=?, price=?, quantity=?, image_url=?, category_id=?, created_at=?, discount=? WHERE id=?";
     private static final String SELECT_BOOKS_BY_PAGE = "SELECT b.*, c.name AS category_name "
             + "FROM Books b "
             + "LEFT JOIN Categories c ON b.category_id = c.id "
@@ -85,7 +86,6 @@ public class BookDao implements IBookDAO {
             + "LEFT JOIN Categories c ON b.category_id = c.id "
             + "WHERE LOWER(b.description) LIKE ?";
 
-
     @Override
     public void insertBook(Book book) throws SQLException {
         try (Connection connection = DBConnection.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(INSERT_BOOK_SQL)) {
@@ -98,6 +98,7 @@ public class BookDao implements IBookDAO {
             preparedStatement.setString(6, book.getImageURL());
             preparedStatement.setInt(7, book.getCategoryID());
             preparedStatement.setDate(8, new java.sql.Date(book.getCreated_at().getTime()));
+            preparedStatement.setInt(9, book.getDiscount());
 
             preparedStatement.executeUpdate();
         }
@@ -149,24 +150,26 @@ public class BookDao implements IBookDAO {
     }
 
     @Override
-    public boolean updateBook(Book book) throws SQLException {
-        boolean rowUpdated;
-        try (Connection connection = DBConnection.getConnection(); PreparedStatement statement = connection.prepareStatement(UPDATE_BOOK_SQL)) {
+public boolean updateBook(Book book) throws SQLException {
+    boolean rowUpdated;
+    try (Connection connection = DBConnection.getConnection(); PreparedStatement statement = connection.prepareStatement(UPDATE_BOOK_SQL)) {
 
-            statement.setString(1, book.getTitle());
-            statement.setString(2, book.getAuthor());
-            statement.setString(3, book.getDescription());
-            statement.setDouble(4, book.getPrice());
-            statement.setInt(5, book.getQuantity());
-            statement.setString(6, book.getImageURL());
-            statement.setInt(7, book.getCategoryID());
-            statement.setDate(8, new java.sql.Date(book.getCreated_at().getTime()));
-            statement.setInt(9, book.getId());
+        statement.setString(1, book.getTitle());
+        statement.setString(2, book.getAuthor());
+        statement.setString(3, book.getDescription());
+        statement.setDouble(4, book.getPrice());
+        statement.setInt(5, book.getQuantity());
+        statement.setString(6, book.getImageURL());
+        statement.setInt(7, book.getCategoryID());
+        statement.setDate(8, new java.sql.Date(book.getCreated_at().getTime()));
+        statement.setInt(9, book.getDiscount());
+        statement.setInt(10, book.getId());
 
-            rowUpdated = statement.executeUpdate() > 0;
-        }
-        return rowUpdated;
+        rowUpdated = statement.executeUpdate() > 0;
     }
+    return rowUpdated;
+}
+
 
     private Book extractBookFromResultSet(ResultSet rs) throws SQLException {
         Book book = new Book();
@@ -180,6 +183,7 @@ public class BookDao implements IBookDAO {
         book.setCategoryID(rs.getInt("category_id"));
         book.setCreated_at(rs.getDate("created_at"));
         book.setCategoryName(rs.getString("category_name"));
+        book.setDiscount(rs.getInt("discount"));
         return book;
     }
 
@@ -399,7 +403,7 @@ public class BookDao implements IBookDAO {
         }
         return books;
     }
-    
+
     @Override
     public List<Book> getBooksByCategoryName(String categoryName) throws SQLException {
         List<Book> books = new ArrayList<>();
@@ -416,7 +420,7 @@ public class BookDao implements IBookDAO {
                 book.setQuantity(rs.getInt("quantity"));
                 book.setImageURL(rs.getString("image_url"));
                 book.setCategoryID(rs.getInt("category_id"));
-                book.setCategoryName(rs.getString("category_name"));  
+                book.setCategoryName(rs.getString("category_name"));
                 book.setCreated_at(rs.getDate("created_at"));
                 books.add(book);
             }

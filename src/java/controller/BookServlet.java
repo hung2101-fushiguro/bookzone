@@ -83,54 +83,52 @@ public class BookServlet extends HttpServlet {
         }
     }
 
-   private void listBooks(HttpServletRequest request, HttpServletResponse response)
-        throws SQLException, ServletException, IOException {
+    private void listBooks(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, ServletException, IOException {
 
-    // Lấy tham số tìm kiếm và sắp xếp
-    String keyword = request.getParameter("keyword");
-    String sortPrice = request.getParameter("sortPrice");
-    String sortQuantity = request.getParameter("sortQuantity");
+        // Lấy tham số tìm kiếm và sắp xếp
+        String keyword = request.getParameter("keyword");
+        String sortPrice = request.getParameter("sortPrice");
+        String sortQuantity = request.getParameter("sortQuantity");
 
-    // Phân trang
-    int page = 1;
-    int recordsPerPage = 10;
-    if (request.getParameter("page") != null) {
-        try {
-            page = Integer.parseInt(request.getParameter("page"));
-        } catch (NumberFormatException e) {
-            page = 1;
+        // Phân trang
+        int page = 1;
+        int recordsPerPage = 10;
+        if (request.getParameter("page") != null) {
+            try {
+                page = Integer.parseInt(request.getParameter("page"));
+            } catch (NumberFormatException e) {
+                page = 1;
+            }
         }
+        int offset = (page - 1) * recordsPerPage;
+
+        List<Book> books;
+        int totalBooks;
+
+        // Nếu có keyword tìm kiếm
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            books = bookService.searchBooks(keyword.trim(), sortPrice, sortQuantity, offset, recordsPerPage);
+            totalBooks = bookService.getSearchBookCount(keyword.trim());
+        } else {
+            // Không có keyword => truyền "" vào để áp dụng sắp xếp + phân trang
+            books = bookService.searchBooks("", sortPrice, sortQuantity, offset, recordsPerPage);
+            totalBooks = bookService.getTotalBookCount();
+        }
+
+        int totalPages = (int) Math.ceil(totalBooks * 1.0 / recordsPerPage);
+
+        // Gửi dữ liệu tới JSP
+        request.setAttribute("books", books);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("keyword", keyword);
+        request.setAttribute("sortPrice", sortPrice);
+        request.setAttribute("sortQuantity", sortQuantity);
+
+        RequestDispatcher dispatcher = request.getRequestDispatcher("book/bookList.jsp");
+        dispatcher.forward(request, response);
     }
-    int offset = (page - 1) * recordsPerPage;
-
-    List<Book> books;
-    int totalBooks;
-
-    // Nếu có keyword tìm kiếm
-    if (keyword != null && !keyword.trim().isEmpty()) {
-        books = bookService.searchBooks(keyword.trim(), sortPrice, sortQuantity, offset, recordsPerPage);
-        totalBooks = bookService.getSearchBookCount(keyword.trim());
-    } else {
-        // Không có keyword => truyền "" vào để áp dụng sắp xếp + phân trang
-        books = bookService.searchBooks("", sortPrice, sortQuantity, offset, recordsPerPage);
-        totalBooks = bookService.getTotalBookCount();
-    }
-
-    int totalPages = (int) Math.ceil(totalBooks * 1.0 / recordsPerPage);
-
-    // Gửi dữ liệu tới JSP
-    request.setAttribute("books", books);
-    request.setAttribute("currentPage", page);
-    request.setAttribute("totalPages", totalPages);
-    request.setAttribute("keyword", keyword);
-    request.setAttribute("sortPrice", sortPrice);
-    request.setAttribute("sortQuantity", sortQuantity);
-
-    RequestDispatcher dispatcher = request.getRequestDispatcher("book/bookList.jsp");
-    dispatcher.forward(request, response);
-}
-
-
 
     private void showCreateForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -165,6 +163,7 @@ public class BookServlet extends HttpServlet {
         int cateId = Integer.parseInt(request.getParameter("cateId"));
         String importDateStr = request.getParameter("dateadd");
         java.sql.Date dateadd = java.sql.Date.valueOf(importDateStr);
+        int discount = Integer.parseInt(request.getParameter("discount"));
 
         Book newBook = new Book();
         newBook.setTitle(title);
@@ -175,6 +174,7 @@ public class BookServlet extends HttpServlet {
         newBook.setImageURL(img_url);
         newBook.setCategoryID(cateId);
         newBook.setCreated_at(dateadd);
+        newBook.setDiscount(discount);
 
         bookService.addBook(newBook);
         response.sendRedirect("books");
@@ -199,8 +199,9 @@ public class BookServlet extends HttpServlet {
         int cateId = Integer.parseInt(request.getParameter("cateId"));
         String importDateStr = request.getParameter("dateadd");
         java.sql.Date dateadd = java.sql.Date.valueOf(importDateStr);
+        int discount = Integer.parseInt(request.getParameter("discount"));
 
-        Book book = new Book(id, title, author, description, price, quantity, img_url, cateId, dateadd);
+        Book book = new Book(id, title, author, description, price, quantity, img_url, cateId, dateadd, discount);
         bookService.updateBook(book);
         response.sendRedirect("books");
     }

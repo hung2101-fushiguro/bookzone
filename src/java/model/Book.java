@@ -7,6 +7,19 @@ public class Book {
     private int id;
     private String title;
     private String author;
+
+    public Book(int id, String title, String author, String description, double price, int quantity, String imageURL, int categoryID, Date created_at, int discount) {
+        this.id = id;
+        this.title = title;
+        this.author = author;
+        this.description = description;
+        this.price = price;
+        this.quantity = quantity;
+        this.imageURL = imageURL;
+        this.categoryID = categoryID;
+        this.created_at = created_at;
+        this.discount = discount;
+    }
     private String description;
     private double price;
     private int quantity;

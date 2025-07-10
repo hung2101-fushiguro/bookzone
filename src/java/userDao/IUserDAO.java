@@ -17,8 +17,8 @@ public interface  IUserDAO {
     public List<User> selectAllUsers();
 
     public boolean deleteUser(int id) throws SQLException;
+    
+    User selectUserByEmail(String email);
 
     public boolean updateUser(User user) throws SQLException;
 }
-
-

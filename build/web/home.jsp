@@ -471,9 +471,56 @@
             .category-header .view-more:hover {
                 background-color: #e0e0e0;
                 text-decoration: underline;
+            }/* Đảm bảo các ô sách đều nhau */
+            .book-item, .book-card {
+                height: 360px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
             }
 
+            .book-item img, .book-card img {
+                height: 220px;
+                object-fit: cover;
+            }
 
+            .book-title, .book-card p {
+                height: 40px;
+                overflow: hidden;
+            }
+            .book-image-wrapper {
+                width: 100%;
+                height: 220px;
+                overflow: hidden;
+                border-radius: 4px;
+            }
+
+            .book-image-wrapper img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                background-color: #fff; /* hoặc #f5f5f5 để đồng bộ nền */
+            }
+            .backToTop {
+                display: none;
+                position: fixed;
+                bottom: 40px;
+                right: 30px;
+                z-index: 999;
+                border: none;
+                outline: none;
+                background-color: #2196f3;
+                color: white;
+                cursor: pointer;
+                padding: 12px 16px;
+                border-radius: 50%;
+                font-size: 18px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+                transition: opacity 0.3s ease;
+            }
+            .backToTop:hover {
+                background-color: #0b7dda;
+            }
 
         </style>
     </head>
@@ -507,11 +554,17 @@
                 <button type="submit" class="search-button">Tìm</button>
             </form>
             <div class="header_utilities">
+                <c:set var="cartCount" value="0" />
+                <c:if test="${not empty sessionScope.cart}">
+                    <c:forEach var="item" items="${sessionScope.cart}">
+                        <c:set var="cartCount" value="${cartCount + item.quantity}" />
+                    </c:forEach>
+                </c:if>
                 <a href="${pageContext.request.contextPath}/offers" class="utility_link">
-                    <img src="image/question.png" alt="Ưu đãi" class="icon-img"> Ưu đãi & Tiện ích
+                    <strong>Ưu đãi & Tiện ích</strong>
                 </a>
                 <a href="${pageContext.request.contextPath}/cart" class="utility_link">
-                    <span class="icon">🛒</span> Giỏ hàng (0)
+                    <span class="icon">🛒</span> <strong>Giỏ hàng (${cartCount})</strong>
                 </a>
             </div>
         </div>
@@ -555,7 +608,10 @@
                                     <div class="book-discount">-${discountValue}%</div>
                                 </c:if>
 
-                                <img src="${book.imageURL}" alt="${book.title}">
+                                <div class="book-image-wrapper">
+                                    <img src="${book.imageURL}" alt="${book.title}">
+                                </div>
+
                                 <div class="book-title">${book.title}</div>
 
                                 <c:set var="finalPrice" value="${book.price * (1 - discountValue / 100.0)}" />
@@ -583,6 +639,8 @@
                 </div>
 
 
+            </div>
+            <div><button class="backToTop" title="Lên đầu trang">↑</button>
             </div>
         </div>
 
@@ -616,6 +674,20 @@
                     ]
                 });
             });
+
+            const backToTopBtn = document.querySelector(".backToTop");
+
+            window.onscroll = function () {
+                if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                    backToTopBtn.style.display = "block";
+                } else {
+                    backToTopBtn.style.display = "none";
+                }
+            };
+
+            backToTopBtn.onclick = function () {
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            };
         </script>
 
         <c:forEach var="category" items="${categories}">
@@ -643,7 +715,10 @@
                     <c:forEach var="book" items="${categoryBooks}">
                         <a href="${pageContext.request.contextPath}/bookdetail?id=${book.id}" class="book-link">
                             <div class="book-card">
-                                <img src="${book.imageURL}" alt="${book.title}" />
+                                <div class="book-image-wrapper">
+                                    <img src="${book.imageURL}" alt="${book.title}" />
+                                </div>
+
                                 <p>${book.title}</p>
                                 <p class="book-price-text">
                                     <fmt:formatNumber value="${book.price}" type="number" groupingUsed="true" maxFractionDigits="0" /> đ

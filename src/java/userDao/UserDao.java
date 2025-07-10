@@ -1,4 +1,3 @@
-
 package userDao;
 
 import dao.DBConnection;
@@ -8,19 +7,26 @@ import java.util.List;
 import model.User;
 
 
+public class UserDao implements IUserDAO {
 
-public class UserDao implements IUserDAO{
-        private static final String LOGIN = "SELECT * FROM Users WHERE email = ? AND password =?";
-    private static final String INSERT_USER = "INSERT INTO Users (username, email, password, name, avatar_url, provider, provider_id, role, created_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String LOGIN = "SELECT * FROM [Users] WHERE email = ? AND password = ?";
+    private static final String INSERT_USER = "INSERT INTO [Users] " +
+            "([username], [email], [password], [name], [avatar_url], [provider], [provider_id], [role], [created_at]) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
     private static final String SELECT_USER_BY_ID = "SELECT * FROM Users WHERE id = ?";
     private static final String SELECT_ALL_USERS = "SELECT * FROM Users";
     private static final String DELETE_USER_BY_ID = "DELETE FROM [Users] WHERE id = ?";
-    private static final String UPDATE_USER = "UPDATE Users SET " + "username = ?, email = ?, password = ?, name = ?, avatar_url = ?, " + "provider = ?, provider_id = ?, role = ?, created_at = ? " + "WHERE id = ?";
+    private static final String UPDATE_USER = "UPDATE [Users] SET " +
+            "[username] = ?, [email] = ?, [password] = ?, [name] = ?, [avatar_url] = ?, " +
+            "[provider] = ?, [provider_id] = ?, [role] = ?, [created_at] = ? " +
+            "WHERE id = ?";
 
     @Override
     public User checkLogin(String email, String password) {
         User user = null;
-        try (Connection con = DBConnection.getConnection(); PreparedStatement pst = con.prepareStatement(LOGIN)) {
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement pst = con.prepareStatement(LOGIN)) {
 
             pst.setString(1, email);
             pst.setString(2, password);
@@ -39,7 +45,8 @@ public class UserDao implements IUserDAO{
 
     @Override
     public void insertUser(User user) throws SQLException {
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(INSERT_USER)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(INSERT_USER)) {
 
             ps.setString(1, user.getUsername());
             ps.setString(2, user.getEmail());
@@ -59,7 +66,8 @@ public class UserDao implements IUserDAO{
     @Override
     public User selectUser(int id) {
         User user = null;
-        try (Connection con = DBConnection.getConnection(); PreparedStatement pst = con.prepareStatement(SELECT_USER_BY_ID)) {
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement pst = con.prepareStatement(SELECT_USER_BY_ID)) {
 
             pst.setInt(1, id);
 
@@ -78,7 +86,9 @@ public class UserDao implements IUserDAO{
     @Override
     public List<User> selectAllUsers() {
         List<User> userList = new ArrayList<>();
-        try (Connection con = DBConnection.getConnection(); PreparedStatement pst = con.prepareStatement(SELECT_ALL_USERS); ResultSet rs = pst.executeQuery()) {
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement pst = con.prepareStatement(SELECT_ALL_USERS);
+             ResultSet rs = pst.executeQuery()) {
 
             while (rs.next()) {
                 userList.add(extractUserFromResultSet(rs));
@@ -92,7 +102,8 @@ public class UserDao implements IUserDAO{
 
     @Override
     public boolean deleteUser(int id) throws SQLException {
-        try (Connection con = DBConnection.getConnection(); PreparedStatement pst = con.prepareStatement(DELETE_USER_BY_ID)) {
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement pst = con.prepareStatement(DELETE_USER_BY_ID)) {
 
             pst.setInt(1, id);
             int rows = pst.executeUpdate();
@@ -108,7 +119,8 @@ public class UserDao implements IUserDAO{
 
     @Override
     public boolean updateUser(User user) throws SQLException {
-        try (Connection con = DBConnection.getConnection(); PreparedStatement pst = con.prepareStatement(UPDATE_USER)) {
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement pst = con.prepareStatement(UPDATE_USER)) {
 
             pst.setString(1, user.getUsername());
             pst.setString(2, user.getEmail());
@@ -131,6 +143,26 @@ public class UserDao implements IUserDAO{
             return false;
         }
     }
+    public User selectUserByEmail(String email) {
+    User user = null;
+    String query = "SELECT * FROM Users WHERE email = ?";
+    try (Connection con = DBConnection.getConnection();
+         PreparedStatement pst = con.prepareStatement(query)) {
+
+        pst.setString(1, email);
+
+        try (ResultSet rs = pst.executeQuery()) {
+            if (rs.next()) {
+                user = extractUserFromResultSet(rs);
+            }
+        }
+    } catch (Exception e) {
+        System.out.println("Error in selectUserByEmail:");
+        e.printStackTrace();
+    }
+    return user;
+}
+
 
     private User extractUserFromResultSet(ResultSet rs) throws SQLException {
         return new User(
@@ -163,5 +195,3 @@ public class UserDao implements IUserDAO{
         }
     }
 }
-
-

@@ -13,6 +13,8 @@ public class User {
     private String providerId;
     private String role;
     private Date createdAt;
+    private String address;
+    private String phone;
 
     public User() {
     }
@@ -112,6 +114,23 @@ public class User {
         this.createdAt = createdAt;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    
     @Override
     public String toString() {
         return "User{" +

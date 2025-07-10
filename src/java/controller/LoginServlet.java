@@ -76,16 +76,17 @@ public class LoginServlet extends HttpServlet {
 
         // Lưu user vào session
         HttpSession session = request.getSession();
+        session.setMaxInactiveInterval(60 * 5);
         session.setAttribute("user", user);
 
         // Phân quyền và điều hướng
         String role = user.getRole();
         if ("admin".equalsIgnoreCase(role)) {
-            response.sendRedirect("books");
+            response.sendRedirect("admin/admin.jsp");
             // ví dụ admin trang quản lý users
             return;
         } else {
-            response.sendRedirect("home.jsp"); // trang chính của người dùng
+            response.sendRedirect("home"); // trang chính của người dùng
             return;
         }
     }

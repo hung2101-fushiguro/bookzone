@@ -43,6 +43,16 @@ public class UserService implements IUserService {
         return userDao.checkLogin(email, password);
     }
 
+    @Override
+    public void insertUser(User user) throws SQLException {
+        userDao.insertUser(user);
+    }
+
+    @Override
+    public User selectUserByEmail(String email) {
+        return userDao.selectUserByEmail(email);
+    }
+
     
 }
 
