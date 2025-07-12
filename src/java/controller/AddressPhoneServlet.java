@@ -12,6 +12,7 @@ import model.User;
 import service.UserService;
 import java.math.BigDecimal;
 import java.util.Date;
+import service.OrderService;
 import service.UserService;
 
 @WebServlet(name = "AddressPhoneServlet", urlPatterns = {"/update-contact"})
@@ -73,6 +74,7 @@ public class AddressPhoneServlet extends HttpServlet {
                 order.setUserId(user.getId());
                 order.setTotalPrice(total.doubleValue());
                 order.setStatus("đang xử lý");
+                new OrderService().createOrderWithDetails(order, processingItems);
 
                 session.setAttribute("lastOrder", order);
                 session.setAttribute("lastCart", processingItems);
