@@ -9,9 +9,7 @@ import java.util.List;
 import model.CartItem;
 import model.Order;
 import model.User;
-import service.UserService;
 import java.math.BigDecimal;
-import java.util.Date;
 import service.OrderService;
 import service.UserService;
 
@@ -28,7 +26,7 @@ public class AddressPhoneServlet extends HttpServlet {
         User user = (User) session.getAttribute("user");
 
         if (user == null) {
-            response.sendRedirect("user/login.jsp");
+            response.sendRedirect("user/loginUser.jsp");
             return;
         }
 

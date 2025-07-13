@@ -1,4 +1,3 @@
-
 package service;
 
 import model.Order;
@@ -22,6 +21,9 @@ public interface IOrderService {
     int createOrder(Order order) throws SQLException;
 
     void addOrderDetail(int orderId, int bookId, int quantity, Double price) throws SQLException;
-    
+
     public void createOrderWithDetails(Order order, List<CartItem> cart);
+
+    List<Order> getOrdersByUserId(int userId);
+
 }

@@ -1,4 +1,3 @@
-
 package orderDao;
 
 import dao.DBConnection;
@@ -10,13 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 import model.Order;
 
-public class OrderDao implements IOrderDAO{
+public class OrderDao implements IOrderDAO {
+
     private static final String SELECT_ORDER_BY_ID = "SELECT * FROM Orders WHERE id = ?";
     private static final String INSERT_ORDER = "INSERT INTO Orders (user_id, total_price, status) VALUES (?, ?, ?)";
     private static final String INSERT_ORDER_DETAILS = "INSERT INTO OrderDetails (order_id, book_id, quantity, price) VALUES (?, ?, ?, ?)";
     private static final String UPDATE_ORDER = "UPDATE Orders SET user_id = ?, total_price = ?, status = ? WHERE id = ?";
     private static final String SELECT_ALL_ORDERS = "SELECT * FROM Orders";
     private static final String DELETE_ORDER = "DELETE FROM Orders WHERE id = ?";
+    private static final String SELECT_ORDERS_BY_USER = "SELECT * FROM Orders WHERE user_id = ? ORDER BY created_at DESC";
 
     @Override
     public void insertOrder(Order orderObj) throws SQLException {
@@ -104,6 +105,21 @@ public class OrderDao implements IOrderDAO{
             ps.setDouble(4, price);
             ps.executeUpdate();
         }
+    }
+
+    @Override
+    public List<Order> getOrdersByUserId(int userId) {
+        List<Order> orders = new ArrayList<>();
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(SELECT_ORDERS_BY_USER)) {
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                orders.add(Order.fromResultSet(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return orders;
     }
 
 }

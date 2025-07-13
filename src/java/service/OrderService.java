@@ -56,6 +56,12 @@ public class OrderService implements IOrderService {
     public void addOrderDetail(int orderId, int bookId, int quantity, Double price) throws SQLException {
         orderDAO.addOrderDetail(orderId, bookId, quantity, price);
     }
+
+    @Override
+    public List<Order> getOrdersByUserId(int userId) {
+        return orderDAO.getOrdersByUserId(userId);
+    }
+
     @Override
     public void createOrderWithDetails(Order order, List<CartItem> cartItems) {
         int orderId = 0;
@@ -74,4 +80,3 @@ public class OrderService implements IOrderService {
         }
     }
 }
-

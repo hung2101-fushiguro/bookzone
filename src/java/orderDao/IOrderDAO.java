@@ -1,10 +1,8 @@
-
 package orderDao;
 
 import java.sql.SQLException;
 import java.util.List;
 import model.Order;
-
 
 public interface IOrderDAO {
 
@@ -22,5 +20,6 @@ public interface IOrderDAO {
 
     void addOrderDetail(int orderId, int bookId, int quantity, Double price) throws SQLException;
 
-}
+    List<Order> getOrdersByUserId(int userId);
 
+}
