@@ -11,15 +11,20 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import model.Order;
+import model.OrderDetail;
+import orderdetailDao.OrderDetailDao;
 import service.OrderService;
 
 /**
  *
  * @author DELL
  */
-@WebServlet(name = "OrderStatusServlet", urlPatterns = {"/updatestatus"})
-public class OrderStatusServlet extends HttpServlet {
+@WebServlet(name = "ControlServlet", urlPatterns = {"/orders"})
+public class ControlServlet extends HttpServlet {
 
     private OrderService orderService;
 
@@ -45,10 +50,10 @@ public class OrderStatusServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet OrderStatusServlet</title>");
+            out.println("<title>Servlet ControlServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet OrderStatusServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ControlServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -66,7 +71,20 @@ public class OrderStatusServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        List<Order> orders = orderService.getAllOrders();
+
+        // Tạo map chứa danh sách chi tiết từng đơn hàng
+        Map<Integer, List<OrderDetail>> orderDetailsMap = new HashMap<>();
+        OrderDetailDao orderDetailDao = new OrderDetailDao();
+
+        for (Order order : orders) {
+            List<OrderDetail> details = orderDetailDao.getOrderDetailsByOrderId(order.getId());
+            orderDetailsMap.put(order.getId(), details);
+        }
+
+        request.setAttribute("orders", orders);
+        request.setAttribute("orderDetailsMap", orderDetailsMap);
+        request.getRequestDispatcher("admin/adminorder.jsp").forward(request, response);
     }
 
     /**
@@ -80,34 +98,7 @@ public class OrderStatusServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String orderIdStr = request.getParameter("orderId");
-        String newStatus = request.getParameter("status"); // Thêm dòng này để đọc trạng thái từ form admin
-
-        if (orderIdStr != null) {
-            try {
-                int orderId = Integer.parseInt(orderIdStr);
-                Order order = orderService.getOrderById(orderId);
-
-                if (newStatus != null) {
-                    // Trường hợp admin cập nhật trạng thái
-                    orderService.updateOrderStatus(orderId, newStatus);
-                } else if (order != null && "đang vận chuyển".equalsIgnoreCase(order.getStatus())) {
-                    // Trường hợp người dùng xác nhận đã nhận hàng
-                    orderService.updateOrderStatus(orderId, "đã nhận");
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        // Quay lại trang trước đó (admin hoặc user)
-        String referer = request.getHeader("referer");
-        if (referer != null && referer.contains("/orders")) {
-            response.sendRedirect(request.getContextPath() + "/orders"); // Nếu từ trang admin
-        } else {
-            response.sendRedirect(request.getContextPath() + "/cartinformation"); // Nếu từ người dùng
-        }
+        processRequest(request, response);
     }
 
     /**

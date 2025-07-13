@@ -15,7 +15,7 @@ public class OrderDao implements IOrderDAO {
     private static final String INSERT_ORDER = "INSERT INTO Orders (user_id, total_price, status) VALUES (?, ?, ?)";
     private static final String INSERT_ORDER_DETAILS = "INSERT INTO OrderDetails (order_id, book_id, quantity, price) VALUES (?, ?, ?, ?)";
     private static final String UPDATE_ORDER = "UPDATE Orders SET user_id = ?, total_price = ?, status = ? WHERE id = ?";
-    private static final String SELECT_ALL_ORDERS = "SELECT * FROM Orders";
+    private static final String SELECT_ALL_ORDERS = "SELECT o.*, u.address, u.name AS user_name FROM Orders o JOIN Users u ON o.user_id = u.id";
     private static final String DELETE_ORDER = "DELETE FROM Orders WHERE id = ?";
     private static final String SELECT_ORDERS_BY_USER = "SELECT * FROM Orders WHERE user_id = ? ORDER BY order_date DESC";
     private static final String UPDATE_ORDER_STATUS = "UPDATE Orders SET status = ? WHERE id = ?";
@@ -52,7 +52,10 @@ public class OrderDao implements IOrderDAO {
         List<Order> orders = new ArrayList<>();
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(SELECT_ALL_ORDERS); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                orders.add(Order.fromResultSet(rs));
+                Order order = Order.fromResultSet(rs);
+                order.setAddress(rs.getString("address"));
+                order.setUserName(rs.getString("user_name"));
+                orders.add(order);
             }
         } catch (SQLException e) {
             e.printStackTrace();

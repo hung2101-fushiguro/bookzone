@@ -10,7 +10,11 @@ public class Order {
     private int userId;
     private double totalPrice;
     private String status;
-    private Date createdAt; // ✅ Ngày đặt hàng
+    private Date createdAt;
+
+    // Thêm 2 thuộc tính mới để hiển thị
+    private String userName;
+    private String address;
 
     public Order() {
     }
@@ -64,25 +68,53 @@ public class Order {
         this.createdAt = createdAt;
     }
 
-    @Override
-    public String toString() {
-        return "Order{" +
-               "id=" + id +
-               ", userId=" + userId +
-               ", totalPrice=" + totalPrice +
-               ", status='" + status + '\'' +
-               ", createdAt=" + createdAt +
-               '}';
+    public String getUserName() {
+        return userName;
     }
 
-    
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    @Override
+    public String toString() {
+        return "Order{"
+                + "id=" + id
+                + ", userId=" + userId
+                + ", totalPrice=" + totalPrice
+                + ", status='" + status + '\''
+                + ", createdAt=" + createdAt
+                + ", userName='" + userName + '\''
+                + ", address='" + address + '\''
+                + '}';
+    }
+
     public static Order fromResultSet(ResultSet rs) throws SQLException {
         Order order = new Order();
         order.setId(rs.getInt("id"));
         order.setUserId(rs.getInt("user_id"));
         order.setTotalPrice(rs.getDouble("total_price"));
         order.setStatus(rs.getString("status"));
-        order.setCreatedAt(rs.getTimestamp("order_date")); // lấy ngày tạo
+        order.setCreatedAt(rs.getTimestamp("order_date"));
+
+        // Bổ sung nếu có cột user_name và address trong truy vấn SQL
+        try {
+            order.setUserName(rs.getString("user_name"));
+        } catch (SQLException ignored) {
+        }
+        try {
+            order.setAddress(rs.getString("address"));
+        } catch (SQLException ignored) {
+        }
+
         return order;
     }
 }
