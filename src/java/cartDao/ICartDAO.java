@@ -1,4 +1,3 @@
-
 package cartDao;
 
 import model.Cart;
@@ -12,4 +11,3 @@ public interface ICartDAO {
 
     void deleteCart(int userId) throws SQLException;
 }
-

@@ -563,6 +563,10 @@
                 <a href="${pageContext.request.contextPath}/offers" class="utility_link">
                     <strong>Ưu đãi & Tiện ích</strong>
                 </a>
+                <a href="${pageContext.request.contextPath}/cartinformation" class="utility_link">
+                    <span class="icon">📦</span> <strong>Đơn hàng</strong>
+                </a>
+
                 <a href="${pageContext.request.contextPath}/cart" class="utility_link">
                     <span class="icon">🛒</span> <strong>Giỏ hàng (${cartCount})</strong>
                 </a>

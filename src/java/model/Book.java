@@ -1,9 +1,11 @@
-
 package model;
 
 import java.util.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class Book {
+
     private int id;
     private String title;
     private String author;
@@ -42,8 +44,6 @@ public class Book {
         this.categoryName = categoryName;
         this.discount = discount;
     }
-    
-    
 
     public Book(int id, String title, String author, String description, double price, int quantity, String imageURL, int categoryID, Date created_at) {
         this.id = id;
@@ -59,7 +59,6 @@ public class Book {
 
     public Book() {
     }
-    
 
     public int getId() {
         return id;
@@ -149,14 +148,38 @@ public class Book {
         this.discount = discount;
     }
 
-    
-    
     @Override
     public String toString() {
         return "Book{" + "id=" + id + ", title=" + title + ", author=" + author + ", description=" + description + ", price=" + price + ", quantity=" + quantity + ", imageURL=" + imageURL + ", categoryID=" + categoryID + ", created_at=" + created_at + '}';
     }
-    
-    
-    
-    
+
+    public static Book fromResultSet(ResultSet rs) throws SQLException {
+        Book book = new Book();
+        book.setId(rs.getInt("id"));
+        book.setTitle(rs.getString("title"));
+        book.setAuthor(rs.getString("author"));
+        book.setDescription(rs.getString("description"));
+        book.setPrice(rs.getDouble("price"));
+        book.setQuantity(rs.getInt("quantity"));
+        book.setImageURL(rs.getString("image_url"));
+        book.setCategoryID(rs.getInt("category_id"));
+        book.setCreated_at(rs.getTimestamp("created_at"));
+
+        // optional if SELECT có join categories.name
+        try {
+            book.setCategoryName(rs.getString("category_name"));
+        } catch (SQLException e) {
+            // ignore nếu không có cột này
+        }
+
+        // optional nếu SELECT có discount
+        try {
+            book.setDiscount(rs.getInt("discount"));
+        } catch (SQLException e) {
+            book.setDiscount(0); // mặc định
+        }
+
+        return book;
+    }
+
 }

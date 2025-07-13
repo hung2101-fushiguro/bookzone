@@ -1,4 +1,3 @@
-
 package cartDao;
 
 import model.Cart;
@@ -40,4 +39,3 @@ public class CartDao implements ICartDAO {
         ps.executeUpdate();
     }
 }
-

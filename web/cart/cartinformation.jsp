@@ -175,15 +175,24 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <c:if test="${order.status == 'đang vận chuyển'}">
-                                        <form method="post" action="${pageContext.request.contextPath}/updatestatus">
-                                            <input type="hidden" name="orderId" value="${order.id}" />
-                                            <button class="action-btn" type="submit">Đã nhận hàng</button>
-                                        </form>
-                                    </c:if>
-                                    <c:if test="${order.status != 'đang vận chuyển'}">
-                                        <span>--</span>
-                                    </c:if>
+                                    <c:choose>
+                                        <c:when test="${order.status == 'đang vận chuyển'}">
+                                            <form method="post" action="${pageContext.request.contextPath}/updatestatus">
+                                                <input type="hidden" name="orderId" value="${order.id}" />
+                                                <button class="action-btn" type="submit">Đã nhận hàng</button>
+                                            </form>
+                                        </c:when>
+                                        <c:when test="${order.status == 'đã nhận'}">
+                                            <form method="post" action="${pageContext.request.contextPath}/deleteorder" onsubmit="return confirm('Bạn có chắc muốn xóa đơn này không?');">
+                                                <input type="hidden" name="orderId" value="${order.id}" />
+                                                <button class="action-btn" style="background: crimson;">Xóa</button>
+                                            </form>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span>--</span>
+                                        </c:otherwise>
+                                    </c:choose>
+
                                 </td>
                             </tr>
 
