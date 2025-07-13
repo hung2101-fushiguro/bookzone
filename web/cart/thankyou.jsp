@@ -268,7 +268,9 @@
 
             <div class="button-group">
                 <a href="${pageContext.request.contextPath}/home" class="btn">Tiếp tục mua sắm</a>
+                <a href="${pageContext.request.contextPath}/cartinformation" class="btn">Xem trạng thái đơn hàng</a>
             </div>
+
         </div>
 
         <%

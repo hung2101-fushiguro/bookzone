@@ -63,6 +63,15 @@ public class OrderService implements IOrderService {
     }
 
     @Override
+    public void updateOrderStatus(int orderId, String status) {
+        try {
+            orderDAO.updateOrderStatus(orderId, status);
+        } catch (SQLException e) {
+            Logger.getLogger(OrderService.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+
+    @Override
     public void createOrderWithDetails(Order order, List<CartItem> cartItems) {
         int orderId = 0;
         try {

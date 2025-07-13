@@ -11,26 +11,21 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import java.util.List;
-import model.Order;
-import model.User;
 import service.OrderService;
 
 /**
  *
  * @author DELL
  */
-@WebServlet(name = "OrderInfoServlet", urlPatterns = {"/cartinformation"})
-public class OrderInfoServlet extends HttpServlet {
-
+@WebServlet(name = "OrderStatusServlet", urlPatterns = {"/updatestatus"})
+public class OrderStatusServlet extends HttpServlet {
+    
     private OrderService orderService;
-
+    
     @Override
-    public void init() throws ServletException {
+    public void init() throws ServletException{
         orderService = new OrderService();
     }
-
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -48,10 +43,10 @@ public class OrderInfoServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet OrderInfoServlet</title>");
+            out.println("<title>Servlet OrderStatusServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet OrderInfoServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet OrderStatusServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -69,21 +64,7 @@ public class OrderInfoServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
-        if (user == null) {
-            response.sendRedirect("user/loginUser.jsp");
-            return;
-        }
-        System.out.println(">>> userId: " + user.getId());  // in ra ID user
-        List<Order> orders = orderService.getOrdersByUserId(user.getId());
-
-        System.out.println(">>> số đơn hàng tìm được: " + orders.size());
-        for (Order o : orders) {
-            System.out.println(">>> Order ID: " + o.getId() + ", Status: " + o.getStatus());
-        }
-        request.setAttribute("orders", orders);
-        request.getRequestDispatcher("cart/cartinformation.jsp").forward(request, response);
+        processRequest(request, response);
     }
 
     /**
@@ -97,7 +78,17 @@ public class OrderInfoServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String orderIdStr = request.getParameter("orderId");
+        if(orderIdStr != null){
+            try{
+                int orderId = Integer.parseInt(orderIdStr);
+                orderService.updateOrderStatus(orderId, "Đã nhận");
+                
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+        response.sendRedirect(request.getContextPath() + "/cartinformation");
     }
 
     /**

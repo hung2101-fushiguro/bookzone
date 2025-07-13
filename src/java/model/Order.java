@@ -2,6 +2,7 @@ package model;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 
 public class Order {
 
@@ -9,17 +10,20 @@ public class Order {
     private int userId;
     private double totalPrice;
     private String status;
+    private Date createdAt; // ✅ Ngày đặt hàng
 
     public Order() {
     }
 
-    public Order(int id, int userId, double totalPrice, String status) {
+    public Order(int id, int userId, double totalPrice, String status, Date createdAt) {
         this.id = id;
         this.userId = userId;
         this.totalPrice = totalPrice;
         this.status = status;
+        this.createdAt = createdAt;
     }
 
+    // Getter và Setter
     public int getId() {
         return id;
     }
@@ -52,18 +56,33 @@ public class Order {
         this.status = status;
     }
 
-    @Override
-    public String toString() {
-        return "Order{" + "id=" + id + ", userId=" + userId + ", totalPrice=" + totalPrice + ", status=" + status + '}';
+    public Date getCreatedAt() {
+        return createdAt;
     }
 
-    // Phương thức để ánh xạ kết quả từ ResultSet thành đối tượng Order
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+               "id=" + id +
+               ", userId=" + userId +
+               ", totalPrice=" + totalPrice +
+               ", status='" + status + '\'' +
+               ", createdAt=" + createdAt +
+               '}';
+    }
+
+    
     public static Order fromResultSet(ResultSet rs) throws SQLException {
         Order order = new Order();
         order.setId(rs.getInt("id"));
         order.setUserId(rs.getInt("user_id"));
         order.setTotalPrice(rs.getDouble("total_price"));
         order.setStatus(rs.getString("status"));
+        order.setCreatedAt(rs.getTimestamp("order_date")); // lấy ngày tạo
         return order;
     }
 }

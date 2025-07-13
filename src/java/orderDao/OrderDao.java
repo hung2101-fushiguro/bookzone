@@ -17,7 +17,8 @@ public class OrderDao implements IOrderDAO {
     private static final String UPDATE_ORDER = "UPDATE Orders SET user_id = ?, total_price = ?, status = ? WHERE id = ?";
     private static final String SELECT_ALL_ORDERS = "SELECT * FROM Orders";
     private static final String DELETE_ORDER = "DELETE FROM Orders WHERE id = ?";
-    private static final String SELECT_ORDERS_BY_USER = "SELECT * FROM Orders WHERE user_id = ? ORDER BY created_at DESC";
+    private static final String SELECT_ORDERS_BY_USER = "SELECT * FROM Orders WHERE user_id = ? ORDER BY order_date DESC";
+    private static final String UPDATE_ORDER_STATUS = "UPDATE Orders SET status = ? WHERE id = ?";
 
     @Override
     public void insertOrder(Order orderObj) throws SQLException {
@@ -120,6 +121,15 @@ public class OrderDao implements IOrderDAO {
             e.printStackTrace();
         }
         return orders;
+    }
+
+    @Override
+    public void updateOrderStatus(int orderId, String status) throws SQLException {
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(UPDATE_ORDER_STATUS)) {
+            ps.setString(1, status);
+            ps.setInt(2, orderId);
+            ps.executeUpdate();
+        }
     }
 
 }

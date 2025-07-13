@@ -26,4 +26,6 @@ public interface IOrderService {
 
     List<Order> getOrdersByUserId(int userId);
 
+    void updateOrderStatus(int orderId, String status);
+
 }

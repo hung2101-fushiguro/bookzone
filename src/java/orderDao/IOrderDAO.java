@@ -22,4 +22,6 @@ public interface IOrderDAO {
 
     List<Order> getOrdersByUserId(int userId);
 
+    public void updateOrderStatus(int orderId, String status) throws SQLException;
+
 }

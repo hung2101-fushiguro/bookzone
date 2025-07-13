@@ -176,10 +176,11 @@
                                 </td>
                                 <td>
                                     <c:if test="${order.status == 'đang vận chuyển'}">
-                                        <form method="post" action="${pageContext.request.contextPath}/order/confirm-received">
+                                        <form method="post" action="${pageContext.request.contextPath}/updatestatus">
                                             <input type="hidden" name="orderId" value="${order.id}" />
                                             <button class="action-btn" type="submit">Đã nhận hàng</button>
                                         </form>
+
                                     </c:if>
                                     <c:if test="${order.status != 'đang vận chuyển'}">
                                         <span>--</span>
