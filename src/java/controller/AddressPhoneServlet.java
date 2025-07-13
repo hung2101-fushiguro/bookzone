@@ -16,7 +16,12 @@ import service.UserService;
 @WebServlet(name = "AddressPhoneServlet", urlPatterns = {"/update-contact"})
 public class AddressPhoneServlet extends HttpServlet {
 
-    private UserService userService = new UserService();
+    private UserService userService ;
+    
+    @Override
+    public void init() throws ServletException{
+        userService = new UserService();
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

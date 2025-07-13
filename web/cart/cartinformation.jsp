@@ -180,14 +180,33 @@
                                             <input type="hidden" name="orderId" value="${order.id}" />
                                             <button class="action-btn" type="submit">Đã nhận hàng</button>
                                         </form>
-
                                     </c:if>
                                     <c:if test="${order.status != 'đang vận chuyển'}">
                                         <span>--</span>
                                     </c:if>
                                 </td>
                             </tr>
+
+                            <!-- Hiển thị danh sách sách trong đơn hàng -->
+                            <tr>
+                                <td colspan="5">
+                                    <div style="padding: 10px;">
+                                        <c:forEach var="detail" items="${orderDetailsMap[order.id]}">
+                                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                                <img src="${detail.bookImage}" width="60" height="80" style="margin-right: 15px;" />
+
+                                                <div>
+                                                    <strong>${detail.bookTitle}</strong><br />
+                                                    Số lượng: ${detail.quantity} – Giá: 
+                                                    <fmt:formatNumber value="${detail.price}" type="number" /> ₫
+                                                </div>
+                                            </div>
+                                        </c:forEach>
+                                    </div>
+                                </td>
+                            </tr>
                         </c:forEach>
+
                     </tbody>
                 </table>
             </c:if>
