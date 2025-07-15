@@ -5,6 +5,7 @@ public class CartItem {
     private Book book;
     private int quantity;
     private String status; // "chưa thanh toán", "đang xử lý"
+    private Accessory accessory;
 
     public CartItem() {
     }
@@ -14,6 +15,23 @@ public class CartItem {
         this.quantity = quantity;
         this.status = status;
     }
+
+    public CartItem(Book book, int quantity, String status, Accessory accessory) {
+        this.book = book;
+        this.quantity = quantity;
+        this.status = status;
+        this.accessory = accessory;
+    }
+
+    public Accessory getAccessory() {
+        return accessory;
+    }
+
+    public void setAccessory(Accessory accessory) {
+        this.accessory = accessory;
+    }
+    
+    
 
     public Book getBook() {
         return book;

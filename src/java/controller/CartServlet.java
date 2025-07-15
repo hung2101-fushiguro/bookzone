@@ -10,16 +10,20 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import service.BookService;
+import service.AccessoryService;
 
 @WebServlet(name = "CartServlet", urlPatterns = {"/cart"})
 public class CartServlet extends HttpServlet {
 
     private BookService bookService;
+    private AccessoryService accessoryService;
 
     @Override
-    public void init() throws ServletException {
-        bookService = new BookService();
-    }
+public void init() throws ServletException {
+    bookService = new BookService();
+    accessoryService = new AccessoryService();
+}
+
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

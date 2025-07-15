@@ -42,4 +42,6 @@ public interface IBookDAO {
     List<Book> getBooksByKeywordInDescription(String keyword);
     
     List<Book> getBooksByCategoryName(String categoryName)throws SQLException;
+    
+    List<Book> getRelatedBooks(int categoryId, int excludeBookId, int limit);
 }

@@ -1,0 +1,115 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package accessoryDao;
+
+/**
+ *
+ * @author ADMIN
+ */
+import dao.DBConnection;
+import accessoryCategoryDao.AccessoryCategoryDao;
+import accessoryCategoryDao.IAccessoryCategoryDAO;
+import model.Accessory;
+import model.AccessoryCategory;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class AccessoryDao implements IAccessoryDAO {
+
+    private static final String SELECT_ALL_ACCESSORIES_SQL
+            = "SELECT * FROM Accessory";
+
+    private static final String SELECT_ACCESSORIES_BY_CATEGORY_SQL
+            = "SELECT * FROM Accessory WHERE category_id = ?";
+
+    private static final String SELECT_ACCESSORY_BY_ID_SQL
+            = "SELECT * FROM Accessory WHERE id = ?";
+
+    private static final String INSERT_ACCESSORY_SQL
+            = "INSERT INTO Accessory (name, description, price, quantity, image_url, category_id, created_at) "
+            + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+    private final IAccessoryCategoryDAO categoryDAO;
+
+    public AccessoryDao() {
+        this.categoryDAO = new AccessoryCategoryDao();
+    }
+
+    @Override
+    public void addAccessory(Accessory accessory) throws SQLException {
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(INSERT_ACCESSORY_SQL)) {
+
+            ps.setString(1, accessory.getName());
+            ps.setString(2, accessory.getDescription());
+            ps.setDouble(3, accessory.getPrice());
+            ps.setInt(4, accessory.getQuantity());
+            ps.setString(5, accessory.getImageUrl());
+            ps.setInt(6, accessory.getCategory().getId());
+            ps.setString(7, accessory.getCreatedAt());
+
+            ps.executeUpdate();
+        }
+    }
+
+    @Override
+    public List<Accessory> getAllAccessories() throws SQLException {
+        List<Accessory> accessories = new ArrayList<>();
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(SELECT_ALL_ACCESSORIES_SQL)) {
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                accessories.add(extractAccessory(rs));
+            }
+        }
+        return accessories;
+    }
+
+    @Override
+    public List<Accessory> getByCategory(int categoryId) throws SQLException {
+        List<Accessory> accessories = new ArrayList<>();
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(SELECT_ACCESSORIES_BY_CATEGORY_SQL)) {
+
+            ps.setInt(1, categoryId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                accessories.add(extractAccessory(rs));
+            }
+        }
+        return accessories;
+    }
+
+    @Override
+    public Accessory getById(int id) throws SQLException {
+        Accessory accessory = null;
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(SELECT_ACCESSORY_BY_ID_SQL)) {
+
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                accessory = extractAccessory(rs);
+            }
+        }
+        return accessory;
+    }
+
+    private Accessory extractAccessory(ResultSet rs) throws SQLException {
+        Accessory accessory = new Accessory();
+        accessory.setId(rs.getInt("id"));
+        accessory.setName(rs.getString("name"));
+        accessory.setDescription(rs.getString("description"));
+        accessory.setPrice(rs.getDouble("price"));
+        accessory.setQuantity(rs.getInt("quantity"));
+        accessory.setImageUrl(rs.getString("image_url"));
+        accessory.setCreatedAt(rs.getString("created_at"));
+
+        int categoryId = rs.getInt("category_id");
+        AccessoryCategory category = categoryDAO.getById(categoryId);
+        accessory.setCategory(category);
+
+        return accessory;
+    }
+}

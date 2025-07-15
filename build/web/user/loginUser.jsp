@@ -148,7 +148,7 @@
                 Bạn chưa có tài khoản?
                 <a href="${pageContext.request.contextPath}/register">Đăng ký</a>
             </div>
-        </div>ss
+        </div>
     </body>
 </html>
 

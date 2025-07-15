@@ -278,13 +278,16 @@
                 position: absolute;
                 top: 8px;
                 right: 8px;
-                background-color: red;
+                background-color: #e53935;
                 color: white;
-                font-size: 16px;           /* TĂNG size chữ */
+                font-size: 14px;
                 font-weight: bold;
-                padding: 6px 8px;          /* TĂNG độ rộng/gọn badge */
+                padding: 6px 8px;
                 border-radius: 50%;
+                z-index: 2;
             }
+
+
 
 
             /* Tùy chỉnh mũi tên slick */
@@ -345,14 +348,15 @@
             }
 
             .book-card {
+                position: relative;
                 width: 180px;
                 background: #ffffff;
                 border-radius: 8px;
-                overflow: hidden;
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
                 text-align: center;
                 transition: transform 0.3s;
             }
+
 
             .book-card:hover {
                 transform: translateY(-5px);
@@ -583,6 +587,7 @@
                     <li><a href="categorybooks?categoryId=8">Sách kĩ năng sống</a></li>
                     <li><a href="categorybooks?categoryId=9">Văn học nước ngoài</a></li>
                     <li><a href="categorybooks?categoryId=10">Manga</a></li>
+                    <li><a href="accessorylist">Phụ kiện sách</a></li>
                 </ul>
             </div>
 
@@ -715,18 +720,39 @@
                     <c:forEach var="book" items="${categoryBooks}">
                         <a href="${pageContext.request.contextPath}/bookdetail?id=${book.id}" class="book-link">
                             <div class="book-card">
+                                <c:if test="${book.discount > 0}">
+                                    <div class="book-discount">-${book.discount}%</div>
+                                </c:if>
                                 <div class="book-image-wrapper">
                                     <img src="${book.imageURL}" alt="${book.title}" />
                                 </div>
 
-                                <p>${book.title}</p>
-                                <p class="book-price-text">
-                                    <fmt:formatNumber value="${book.price}" type="number" groupingUsed="true" maxFractionDigits="0" /> đ
-                                </p>
+
+                                <p class="book-title">${book.title}</p>
+
+                                <c:set var="finalPrice" value="${book.price * (1 - (book.discount / 100.0))}" />
+
+                                <div class="book-price">
+                                    <c:choose>
+                                        <c:when test="${book.discount > 0}">
+                                            <span class="price-sale">
+                                                <fmt:formatNumber value="${finalPrice}" type="number" groupingUsed="true" maxFractionDigits="0"/>đ
+                                            </span>
+                                            <span class="price-original">
+                                                <fmt:formatNumber value="${book.price}" type="number" groupingUsed="true" maxFractionDigits="0"/>đ
+                                            </span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="price-sale">
+                                                <fmt:formatNumber value="${book.price}" type="number" groupingUsed="true" maxFractionDigits="0"/>đ
+                                            </span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
                             </div>
                         </a>
-
                     </c:forEach>
+
                 </div>
             </div>
         </c:forEach>

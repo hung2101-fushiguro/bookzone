@@ -41,5 +41,7 @@ public interface IBookService {
     List<Book> getBooksByPriceRange(double minPrice, double maxPrice);
     
     List<Book> getBooksByKeywordInDescription(String keyword);
+    
+    List<Book> getRelatedBooks(int categoryId, int excludeBookId, int limit);
    
 }
