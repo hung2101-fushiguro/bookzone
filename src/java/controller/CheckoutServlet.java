@@ -18,7 +18,9 @@ import model.Order;
 import model.User;
 import service.BookService;
 import service.IBookService;
+import service.IMailService;
 import service.IOrderService;
+import service.MailService;
 import service.OrderService;
 
 /**
@@ -30,6 +32,7 @@ public class CheckoutServlet extends HttpServlet {
 
     private IOrderService orderService = new OrderService();
     private IBookService bookService = new BookService();
+    private IMailService mailService = new MailService();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -125,45 +128,42 @@ public class CheckoutServlet extends HttpServlet {
             }
 
             // Tính tổng tiền
-            // Tính tổng tiền
             double total = cart.stream()
                     .mapToDouble(item -> item.getBook().getPrice() * item.getQuantity())
                     .sum();
 
-// Gán trạng thái cho các mục trong giỏ hàng
+            // Gán trạng thái cho các mục trong giỏ hàng
             for (CartItem item : cart) {
                 item.setStatus("đang xử lý");
             }
 
-// Tạo đơn hàng
+            // Tạo đơn hàng
             Order order = new Order();
             order.setUserId(user.getId());
             order.setTotalPrice(total);
             order.setStatus("Đang xử lý");
 
+            // Lưu đơn hàng và chi tiết
             orderService.createOrderWithDetails(order, cart);
 
-// Lưu thông tin để hiển thị ở trang thankyou.jsp
+            // Lưu thông tin để hiển thị ở trang thankyou.jsp
             session.setAttribute("lastOrder", order);
             session.setAttribute("lastCart", cart);
             session.setAttribute("orderCompleted", true);
 
-// KHÔNG XÓA session cart
+            // Gửi email xác nhận
+           
+
+            // Chuyển hướng tới trang cảm ơn
             request.getRequestDispatcher("cart/thankyou.jsp").forward(request, response);
 
             return;
-
         }
 
         // Nếu không rõ action thì quay về trang xác nhận
         response.sendRedirect("cart/confirm.jsp");
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
         return "Short description";

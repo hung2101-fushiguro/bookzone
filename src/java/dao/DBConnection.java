@@ -14,7 +14,7 @@ public class DBConnection {
     public static String driverName = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
     public static String dbURL = "jdbc:sqlserver://localhost:1433;databaseName=BookZone;encrypt=true;trustServerCertificate=true;";
     public static String userDB = "sa";
-    public static String passDB = "hungsatoru";
+    public static String passDB = "123";
     
     public static Connection getConnection(){
         Connection con = null;

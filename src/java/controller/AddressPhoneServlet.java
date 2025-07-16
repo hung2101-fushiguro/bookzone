@@ -10,6 +10,8 @@ import model.CartItem;
 import model.Order;
 import model.User;
 import java.math.BigDecimal;
+import service.IMailService;
+import service.MailService;
 import service.OrderService;
 import service.UserService;
 
@@ -17,11 +19,12 @@ import service.UserService;
 public class AddressPhoneServlet extends HttpServlet {
 
     private UserService userService ;
-    
+    private IMailService mailService = new MailService();
     @Override
     public void init() throws ServletException{
         userService = new UserService();
     }
+    
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -83,6 +86,7 @@ public class AddressPhoneServlet extends HttpServlet {
                 session.setAttribute("lastCart", processingItems);
                 session.setAttribute("orderCompleted", true); // dùng để clear cart ở CartServlet nếu cần
 
+                 mailService.sendOrderConfirmation(user, order.getId());
                 response.sendRedirect("cart/thankyou.jsp");
             } else {
                 response.sendRedirect("error.jsp");

@@ -117,4 +117,9 @@ public class BookService implements IBookService {
     public List<Book> getLatestBooksByCategory(int categoryId, int limit) {
         return bookDao.getLatestBooksByCategory(categoryId, limit);
     }
+
+    public List<Book> getRelatedBooks(int categoryId, int excludeBookId, int limit) {
+        return bookDao.getRelatedBooks(categoryId, excludeBookId, limit);
+    }
+
 }

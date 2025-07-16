@@ -119,7 +119,7 @@ public class UserServlet extends HttpServlet {
         }
 
         userService.updateUser(user);
-        request.getSession().setAttribute("user", user.getName());
+        request.getSession().setAttribute("user", user);
 
         response.sendRedirect(request.getContextPath() + "/user?action=profile");
     }

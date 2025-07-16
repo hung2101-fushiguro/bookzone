@@ -489,6 +489,7 @@
                 overflow: hidden;
             }
             .book-image-wrapper {
+                position: relative;
                 width: 100%;
                 height: 220px;
                 overflow: hidden;
@@ -549,8 +550,8 @@
             <a class="header_logo" href="${pageContext.request.contextPath}/home">
                 <img src="${pageContext.request.contextPath}/image/logo1.jpg" alt="Logo BookZone">
             </a>
-            <form class="header_search-box" action="${pageContext.request.contextPath}/search" method="get">
-                <input type="text" class="search-input" name="query" placeholder="Tìm kiếm sách...">
+            <form class="header_search-box" action="${pageContext.request.contextPath}/books" method="get">
+                <input type="text" class="search-input" name="keyword" placeholder="Tìm kiếm sách...">
                 <button type="submit" class="search-button">Tìm</button>
             </form>
             <div class="header_utilities">
@@ -560,9 +561,7 @@
                         <c:set var="cartCount" value="${cartCount + item.quantity}" />
                     </c:forEach>
                 </c:if>
-                <a href="${pageContext.request.contextPath}/offers" class="utility_link">
-                    <strong>Ưu đãi & Tiện ích</strong>
-                </a>
+
                 <a href="${pageContext.request.contextPath}/cartinformation" class="utility_link">
                     <span class="icon">📦</span> <strong>Đơn hàng</strong>
                 </a>
@@ -587,6 +586,7 @@
                     <li><a href="categorybooks?categoryId=8">Sách kĩ năng sống</a></li>
                     <li><a href="categorybooks?categoryId=9">Văn học nước ngoài</a></li>
                     <li><a href="categorybooks?categoryId=10">Manga</a></li>
+                    <li><a href="accessorylist">Phụ kiện sách</a></li>
                 </ul>
             </div>
 
@@ -608,11 +608,11 @@
                         <a href="${pageContext.request.contextPath}/bookdetail?id=${book.id}" class="book-link">
                             <div class="book-item">
                                 <c:set var="discountValue" value="${empty book.discount ? 0 : book.discount}" />
-                                <c:if test="${discountValue > 0}">
-                                    <div class="book-discount">-${discountValue}%</div>
-                                </c:if>
 
                                 <div class="book-image-wrapper">
+                                    <c:if test="${discountValue > 0}">
+                                        <div class="book-discount">-${discountValue}%</div>
+                                    </c:if>
                                     <img src="${book.imageURL}" alt="${book.title}">
                                 </div>
 
@@ -641,6 +641,7 @@
                         </a>
                     </c:forEach>
                 </div>
+
 
 
             </div>
@@ -720,17 +721,38 @@
                         <a href="${pageContext.request.contextPath}/bookdetail?id=${book.id}" class="book-link">
                             <div class="book-card">
                                 <div class="book-image-wrapper">
+                                    <c:if test="${book.discount > 0}">
+                                        <div class="book-discount">-${book.discount}%</div>
+                                    </c:if>
                                     <img src="${book.imageURL}" alt="${book.title}" />
                                 </div>
 
-                                <p>${book.title}</p>
-                                <p class="book-price-text">
-                                    <fmt:formatNumber value="${book.price}" type="number" groupingUsed="true" maxFractionDigits="0" /> đ
-                                </p>
-                            </div>
-                        </a>
+                                <p class="book-title">${book.title}</p>
 
+                                <c:set var="finalPrice" value="${book.price * (1 - (book.discount / 100.0))}" />
+
+                                <div class="book-price">
+                                    <c:choose>
+                                        <c:when test="${book.discount > 0}">
+                                            <span class="price-sale">
+                                                <fmt:formatNumber value="${finalPrice}" type="number" groupingUsed="true" maxFractionDigits="0"/>đ
+                                            </span>
+                                            <span class="price-original">
+                                                <fmt:formatNumber value="${book.price}" type="number" groupingUsed="true" maxFractionDigits="0"/>đ
+                                            </span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="price-sale">
+                                                <fmt:formatNumber value="${book.price}" type="number" groupingUsed="true" maxFractionDigits="0"/>đ
+                                            </span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
+                            </div>
+
+                        </a>
                     </c:forEach>
+
                 </div>
             </div>
         </c:forEach>
