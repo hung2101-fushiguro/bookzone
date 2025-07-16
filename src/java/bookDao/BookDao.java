@@ -91,6 +91,14 @@ public class BookDao implements IBookDAO {
             + "LEFT JOIN Categories c ON b.category_id = c.id "
             + "WHERE LOWER(b.description) LIKE ?";
 
+    private static final String SELECT_RELATED_BOOKS
+            = "SELECT b.*, c.name AS category_name "
+            + "FROM Books b "
+            + "LEFT JOIN Categories c ON b.category_id = c.id "
+            + "WHERE b.category_id = ? AND b.id != ? "
+            + "ORDER BY b.created_at DESC "
+            + "OFFSET 0 ROWS FETCH NEXT ? ROWS ONLY";
+
     @Override
     public void insertBook(Book book) throws SQLException {
         try (Connection connection = DBConnection.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(INSERT_BOOK_SQL)) {
@@ -498,6 +506,25 @@ public class BookDao implements IBookDAO {
             while (rs.next()) {
                 Book book = extractBookFromResultSet(rs);
                 books.add(book);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return books;
+    }
+
+    @Override
+    public List<Book> getRelatedBooks(int categoryId, int excludeBookId, int limit) {
+        List<Book> books = new ArrayList<>();
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(SELECT_RELATED_BOOKS)) {
+
+            ps.setInt(1, categoryId);
+            ps.setInt(2, excludeBookId);
+            ps.setInt(3, limit);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                books.add(extractBookFromResultSet(rs));
             }
         } catch (SQLException e) {
             e.printStackTrace();

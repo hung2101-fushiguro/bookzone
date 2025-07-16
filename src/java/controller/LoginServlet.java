@@ -43,6 +43,10 @@ public class LoginServlet extends HttpServlet {
             }
         }
 
+        // 🆕 Đọc redirect nếu có
+        String redirect = request.getParameter("redirect");
+        request.setAttribute("redirect", redirect);
+
         request.setAttribute("rememberedEmail", rememberedEmail);
         request.getRequestDispatcher("user/loginUser.jsp").forward(request, response);
     }
@@ -54,11 +58,13 @@ public class LoginServlet extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         String rememberMe = request.getParameter("rememberMe");
+        String redirect = request.getParameter("redirect"); // 🆕 lấy tham số redirect nếu có
 
         User user = userService.checkLogin(email, password);
 
         if (user == null) {
             request.setAttribute("errorMessage", "Sai email hoặc mật khẩu");
+            request.setAttribute("redirect", redirect); // giữ lại redirect để form hiển thị lại nếu đăng nhập sai
             request.getRequestDispatcher("user/loginUser.jsp").forward(request, response);
             return;
         }
@@ -83,11 +89,13 @@ public class LoginServlet extends HttpServlet {
         String role = user.getRole();
         if ("admin".equalsIgnoreCase(role)) {
             response.sendRedirect("admin/admin.jsp");
-            // ví dụ admin trang quản lý users
-            return;
         } else {
-            response.sendRedirect("home"); // trang chính của người dùng
-            return;
+            // Nếu có redirect URL → chuyển về lại đó, ngược lại thì về home
+            if (redirect != null && !redirect.isEmpty()) {
+                response.sendRedirect(redirect);
+            } else {
+                response.sendRedirect("home");
+            }
         }
     }
 

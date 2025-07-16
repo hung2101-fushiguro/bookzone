@@ -1,16 +1,15 @@
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <%
-    session.setAttribute("lastBookId", request.getParameter("id"));
+    session.setAttribute("lastAccessoryId", request.getParameter("id"));
 %>
 
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>BookZone - Chi Tiết Sách</title>
+        <title>BookZone - Chi tiết Phụ kiện</title>
         <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
         <style>
             body {
@@ -19,24 +18,36 @@
                 padding: 0;
                 background: #f5f5f5;
             }
-            .header_top, .header_main {
+
+            /* HEADER giữ y như HOME */
+            .header_top {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
                 padding: 10px 30px;
-            }
-            .header_top {
                 background: linear-gradient(90deg, #2193b0, #6dd5ed);
                 color: white;
                 font-size: 14px;
             }
+            .header_top a {
+                color: white;
+                text-decoration: none;
+                margin-left: 15px;
+            }
+            .header_top a:hover {
+                text-decoration: underline;
+            }
             .header_main {
-                background: white;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 15px 30px;
+                background-color: white;
                 border-bottom: 2px solid #e0e0e0;
-                color: black;
             }
             .header_logo img {
                 height: 80px;
+                width: auto;
             }
             .header_search-box {
                 flex: 1;
@@ -58,37 +69,45 @@
                 border-radius: 0 4px 4px 0;
                 cursor: pointer;
             }
+            .search-button:hover {
+                background: linear-gradient(90deg, #1976d2, #64b5f6);
+            }
             .header_utilities {
                 display: flex;
                 gap: 20px;
                 align-items: center;
                 font-size: 14px;
             }
-            .header_utilities a {
-                color: black;
+            .utility_link {
+                color: #333;
                 text-decoration: none;
             }
+            .utility_link:hover {
+                color: #00a651;
+            }
+
+            /* DETAIL CONTAINER */
             .container {
-                max-width: 1200px;
+                max-width: 1000px;
                 margin: 30px auto;
                 background: #fff;
                 border-radius: 8px;
                 box-shadow: 0 4px 15px rgba(0,0,0,0.1);
                 padding: 20px;
             }
-            .book-detail-wrapper {
+            .detail-wrapper {
                 display: flex;
                 flex-wrap: wrap;
                 gap: 30px;
             }
-            .book-images {
-                flex: 0 0 35%;
+            .detail-images {
+                flex: 0 0 40%;
                 display: flex;
                 justify-content: center;
             }
-            .book-images img {
-                max-width: 250px;
-                max-height: 350px;
+            .detail-images img {
+                max-width: 300px;
+                max-height: 400px;
                 width: auto;
                 height: auto;
                 object-fit: cover;
@@ -97,61 +116,38 @@
                 display: block;
                 margin: 0 auto;
             }
-            .book-info {
-                flex: 0 0 60%;
+            .detail-info {
+                flex: 0 0 55%;
             }
-            .book-info h1 {
-                font-size: 28px;
-                margin-bottom: 10px;
+            .detail-info h1 {
+                font-size: 26px;
+                margin-bottom: 15px;
                 color: #333;
             }
-            .book-prices {
-                display: flex;
-                align-items: baseline;
-                gap: 15px;
-                margin-bottom: 10px;
-            }
-            .price-sale {
-                font-size: 26px;
+            .detail-price {
+                font-size: 24px;
                 font-weight: bold;
                 color: #e53935;
+                margin-bottom: 15px;
             }
-            .price-original {
-                font-size: 20px;
-                color: #888;
-                text-decoration: line-through;
-            }
-            .discount-badge {
-                background-color: #e53935;
-                color: white;
-                font-size: 14px;
-                padding: 3px 8px;
-                border-radius: 4px;
-            }
-            .book-attributes p {
+            .detail-attributes p {
                 margin: 6px 0;
                 font-size: 15px;
+                color: #444;
             }
-            .book-attributes strong {
-                display: inline-block;
-                width: 120px;
-            }
-            .book-description {
+            .detail-description {
                 margin-top: 10px;
                 font-size: 15px;
                 color: #444;
                 line-height: 1.6;
             }
-            .book-buy-actions {
+            .buy-actions {
                 display: flex;
                 gap: 15px;
-                margin-top: 15px;
+                margin-top: 20px;
             }
-            .book-buy-actions form {
+            .buy-actions button {
                 flex: 1;
-            }
-            .book-buy-actions button {
-                width: 100%;
                 padding: 12px;
                 font-size: 16px;
                 border: none;
@@ -167,20 +163,24 @@
                 background-color: #e53935;
                 color: white;
             }
-            .book-buy-actions button:hover {
+            .buy-actions button:hover {
                 opacity: 0.9;
             }
-
-            @media (max-width: 768px) {
-                .book-detail-wrapper {
-                    flex-direction: column;
-                }
-                .book-images, .book-info {
-                    max-width: 100%;
-                }
+            .back-link {
+                display: inline-block;
+                margin-top: 20px;
+                text-decoration: none;
+                background-color: #2193b0;
+                color: white;
+                padding: 8px 16px;
+                border-radius: 6px;
+                transition: background-color 0.3s;
+            }
+            .back-link:hover {
+                background-color: #1976d2;
             }
 
-            /* Bình luận đã viết */
+            /* COMMENTS */
             .comment-section {
                 margin-top: 40px;
             }
@@ -199,7 +199,6 @@
                 box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             }
 
-            /* Header với tên + sao bên trái, nút ⋮ bên phải */
             .comment-header {
                 display: flex;
                 justify-content: space-between;
@@ -207,7 +206,6 @@
                 margin-bottom: 8px;
             }
 
-            /* Gộp tên và sao cùng 1 dòng bên trái */
             .comment-user-rating {
                 display: flex;
                 align-items: center;
@@ -224,7 +222,6 @@
                 font-weight: bold;
             }
 
-            /* Nút ⋮ ngoài cùng bên phải */
             .comment-actions {
                 position: relative;
             }
@@ -261,7 +258,6 @@
                 background-color: #f0f0f0;
             }
 
-            /* Nội dung comment */
             .comment-content {
                 font-size: 15px;
                 color: #444;
@@ -273,7 +269,6 @@
                 color: #888;
             }
 
-            /* Form viết bình luận */
             .comment-form {
                 margin-top: 30px;
                 padding: 20px;
@@ -319,7 +314,6 @@
                 background: linear-gradient(90deg, #1976a5, #5cc2e2);
             }
 
-            /* Rating input (sao) khi viết bình luận mới */
             .rating-row {
                 display: flex;
                 align-items: center;
@@ -355,55 +349,12 @@
                 color: #ffc107;
             }
 
-            /* Form chỉnh sửa inline */
             .edit-form {
                 margin-top: 10px;
                 background: #fafafa;
                 padding: 10px;
                 border-radius: 5px;
                 border: 1px solid #ddd;
-            }
-
-            /*Goi y sach */
-            .related-books {
-                display: flex;
-                gap: 20px;
-                margin-top: 20px;
-                flex-wrap: wrap;
-            }
-
-            .related-book-card {
-                width: 160px;
-                border: 1px solid #ddd;
-                border-radius: 8px;
-                padding: 10px;
-                text-align: center;
-                background: #fff;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-                transition: 0.3s;
-            }
-
-            .related-book-card img {
-                width: 100%;
-                height: 220px;
-                object-fit: cover;
-                border-radius: 4px;
-            }
-
-            .related-book-card:hover {
-                box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-                transform: translateY(-3px);
-            }
-
-            .related-title {
-                font-weight: bold;
-                color: #333;
-                margin: 8px 0 4px;
-            }
-
-            .related-price {
-                color: #e53935;
-                font-weight: bold;
             }
 
             .comment-pagination {
@@ -433,144 +384,6 @@
                 background-color: #ddd;
                 font-weight: bold;
             }
-
-
-            /*css gợi ý sách*/
-            .related-books {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 20px;
-                margin-top: 20px;
-                justify-content: center;
-            }
-
-            .related-book-link {
-                text-decoration: none;
-                color: inherit;
-            }
-
-            .related-book-card {
-                width: 180px;
-                background: #ffffff;
-                border-radius: 8px;
-                overflow: hidden;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-                text-align: center;
-                transition: transform 0.3s;
-                position: relative;
-            }
-
-            .related-book-card:hover {
-                transform: translateY(-5px);
-            }
-
-            .related-image-wrapper {
-                position: relative;
-                width: 100%;
-                height: 220px;
-                overflow: hidden;
-            }
-
-            .related-image-wrapper img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                border-bottom: 1px solid #eee;
-                background-color: #fff;
-            }
-
-            .book-discount {
-                position: absolute;
-                top: 8px;
-                right: 8px;
-                background-color: #e53935;
-                color: white;
-                font-size: 14px;
-                font-weight: bold;
-                padding: 6px 8px;
-                border-radius: 50%;
-            }
-
-            .related-info {
-                padding: 10px;
-            }
-
-            .related-title {
-                font-size: 14px;
-                font-weight: 500;
-                margin: 6px 0;
-                height: 40px;
-                overflow: hidden;
-            }
-
-            .related-prices {
-                margin-top: 5px;
-            }
-
-            .related-price-sale {
-                color: #e53935;
-                font-weight: bold;
-                margin-right: 5px;
-            }
-
-            .related-price-original {
-                color: #777;
-                text-decoration: line-through;
-                font-size: 13px;
-            }
-
-            .related-more-link {
-                margin-top: 15px;
-                text-align: right;
-            }
-
-            .related-more-link a {
-                display: inline-block;
-                padding: 6px 12px;
-                background-color: #f5f5f5;
-                color: #d32f2f;
-                text-decoration: none;
-                border-radius: 4px;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-                font-size: 14px;
-                transition: background-color 0.3s ease;
-            }
-
-            .related-more-link a:hover {
-                background-color: #e0e0e0;
-                text-decoration: underline;
-            }
-
-            .section-title-bar {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                margin: 40px 0 20px;
-                position: relative;
-            }
-
-            .section-title-bar::before,
-            .section-title-bar::after {
-                content: "";
-                flex: 1;
-                height: 1px;
-                background-color: #ccc;
-                margin: 0 15px;
-            }
-
-            .section-title {
-                font-size: 28px;
-                font-weight: bold;
-                color: #2c3e50;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-                text-align: center;
-                margin: 0;
-            }
-
-
-
-
 
         </style>
     </head>
@@ -608,76 +421,46 @@
                         <c:set var="cartCount" value="${cartCount + item.quantity}" />
                     </c:forEach>
                 </c:if>
-
-                <a href="${pageContext.request.contextPath}/offers"><strong>Ưu đãi&Tiện ích</strong></a>
-                <a href="${pageContext.request.contextPath}/cart"><strong>🛒 Giỏ hàng</strong> (${cartCount})</a>
+                <a href="${pageContext.request.contextPath}/offers" class="utility_link"><strong>Ưu đãi & Tiện ích</strong></a>
+                <a href="${pageContext.request.contextPath}/cart" class="utility_link"><strong>🛒 Giỏ hàng (${cartCount})</strong></a>
             </div>
         </div>
 
-        <!-- BOOK DETAIL -->
+        <!-- DETAIL CONTENT -->
         <div class="container">
-            <div class="book-detail-wrapper">
-                <div class="book-images">
-                    <img src="${book.imageURL}" alt="${book.title}">
+            <div class="detail-wrapper">
+                <div class="detail-images">
+                    <img src="${accessory.imageUrl}" alt="${accessory.name}" />
                 </div>
-                <div class="book-info">
-                    <h1>${book.title}</h1>
-
-                    <c:set var="discountValue" value="${empty book.discount ? 0 : book.discount}" />
-                    <c:set var="finalPrice" value="${book.price * (1 - discountValue / 100.0)}" />
-
-                    <div class="book-prices">
-                        <c:choose>
-                            <c:when test="${discountValue > 0}">
-                                <span class="price-sale">
-                                    <fmt:formatNumber value="${finalPrice}" type="number" groupingUsed="true" maxFractionDigits="0"/>đ
-                                </span>
-                                <span class="price-original">
-                                    <fmt:formatNumber value="${book.price}" type="number" groupingUsed="true" maxFractionDigits="0"/>đ
-                                </span>
-                                <span class="discount-badge">-${discountValue}%</span>
-                            </c:when>
-                            <c:otherwise>
-                                <span class="price-sale">
-                                    <fmt:formatNumber value="${book.price}" type="number" groupingUsed="true" maxFractionDigits="0"/>đ
-                                </span>
-                            </c:otherwise>
-                        </c:choose>
+                <div class="detail-info">
+                    <h1>${accessory.name}</h1>
+                    <div class="detail-price">
+                        <fmt:formatNumber value="${accessory.price}" type="number" groupingUsed="true" maxFractionDigits="0"/>đ
                     </div>
-
-                    <div class="book-attributes">
-                        <p><strong>Mã sách:</strong> ${book.id}</p>
-                        <p><strong>Tác giả:</strong> ${book.author}</p>
-                        <p><strong>Ngày thêm:</strong> <fmt:formatDate value="${book.created_at}" pattern="dd/MM/yyyy"/></p>
-                        <p><strong>Số lượng còn:</strong> ${book.quantity}</p>
+                    <div class="detail-attributes">
+                        <p><strong>Phân loại:</strong> ${accessory.category.name}</p>
+                        <p><strong>Ngày thêm:</strong> ${accessory.createdAt}</p>
                     </div>
-
-                    <div class="book-description">
-                        <strong>Mô tả:</strong> ${book.description}
+                    <div class="detail-description">
+                        <strong>Mô tả:</strong> ${accessory.description}
                     </div>
-
-                    <div class="book-buy-actions">
-                        <form action="${pageContext.request.contextPath}/cart" method="post" style="display: flex; gap: 10px; align-items: center;">
-                            <input type="hidden" name="bookId" value="${book.id}" />
-
-                            <label>
-                                <input type="number" name="quantity" value="1" min="1"
-                                       style="width: 60px; padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
-                            </label>
-
+                    <div class="buy-actions">
+                        <form action="${pageContext.request.contextPath}/cart" method="post">
+                            <input type="hidden" name="accessoryId" value="${accessory.id}" />
+                            <input type="hidden" name="quantity" value="1" />
                             <button type="submit" class="add-cart">🛒 Thêm vào giỏ hàng</button>
                         </form>
                         <form action="${pageContext.request.contextPath}/checkout" method="post">
-                            <input type="hidden" name="bookId" value="${book.id}" />
+                            <input type="hidden" name="accessoryId" value="${accessory.id}" />
                             <input type="hidden" name="quantity" value="1" />
                             <button type="submit" class="buy-now">Mua ngay</button>
                         </form>
                     </div>
+                    <a href="accessorylist" class="back-link">← Quay lại danh sách</a>
                 </div>
             </div>
 
-
-            <!-- Comment  -->
+            <!-- COMMENT SECTION -->
             <h2 class="comment-section">Bình luận</h2>
             <c:if test="${not empty comments}">
                 <div>
@@ -688,7 +471,6 @@
                                     <span class="comment-user">${c.userName}</span>
                                     <span class="comment-rating">${c.rating} ⭐</span>
                                 </div>
-
                                 <c:if test="${sessionScope.user != null && sessionScope.user.id == c.userId}">
                                     <div class="comment-actions">
                                         <button class="menu-toggle" onclick="toggleMenu('${c.commentId}')">⋮</button>
@@ -697,14 +479,13 @@
                                             <form action="${pageContext.request.contextPath}/comment" method="post" style="display:inline;">
                                                 <input type="hidden" name="action" value="delete"/>
                                                 <input type="hidden" name="commentId" value="${c.commentId}"/>
-                                                <input type="hidden" name="bookId" value="${book.id}"/>
+                                                <input type="hidden" name="accessoryId" value="${accessory.id}"/>
                                                 <button type="submit">Xóa</button>
                                             </form>
                                         </div>
                                     </div>
                                 </c:if>
                             </div>
-
 
                             <div class="comment-content" id="content-${c.commentId}">
                                 ${c.content}
@@ -718,7 +499,7 @@
                                 <form action="${pageContext.request.contextPath}/comment" method="post">
                                     <input type="hidden" name="action" value="update"/>
                                     <input type="hidden" name="commentId" value="${c.commentId}"/>
-                                    <input type="hidden" name="bookId" value="${book.id}"/>
+                                    <input type="hidden" name="accessoryId" value="${accessory.id}"/>
 
                                     <label>Đánh giá:</label>
                                     <input type="number" name="rating" value="${c.rating}" min="1" max="5" required>
@@ -730,22 +511,19 @@
                             </div>
                         </div>
                     </c:forEach>
-
-
                 </div>
             </c:if>
             <c:if test="${empty comments}">
-                <p>Chưa có bình luận nào cho sách này.</p>
+                <p>Chưa có bình luận nào cho phụ kiện này.</p>
             </c:if>
-            <!-- PAGINATION for COMMENTS -->
+
+            <!-- PAGINATION -->
             <c:if test="${commentTotalPages > 1}">
                 <div class="comment-pagination">
-                    <!-- Nút prev -->
                     <c:if test="${commentPage > 1}">
-                        <a href="${pageContext.request.contextPath}/bookdetail?id=${book.id}&commentPage=${commentPage - 1}">&laquo;</a>
+                        <a href="${pageContext.request.contextPath}/accessorydetail?id=${accessory.id}&commentPage=${commentPage - 1}">&laquo;</a>
                     </c:if>
 
-                    <!-- Trang số quanh current -->
                     <c:set var="startPage" value="${commentPage - 2 < 1 ? 1 : commentPage - 2}" />
                     <c:set var="endPage" value="${commentPage + 2 > commentTotalPages ? commentTotalPages : commentPage + 2}" />
 
@@ -755,29 +533,26 @@
                                 <strong>${p}</strong>
                             </c:when>
                             <c:otherwise>
-                                <a href="${pageContext.request.contextPath}/bookdetail?id=${book.id}&commentPage=${p}">${p}</a>
+                                <a href="${pageContext.request.contextPath}/accessorydetail?id=${accessory.id}&commentPage=${p}">${p}</a>
                             </c:otherwise>
                         </c:choose>
                     </c:forEach>
 
-                    <!-- Nút next -->
                     <c:if test="${commentPage < commentTotalPages}">
-                        <a href="${pageContext.request.contextPath}/bookdetail?id=${book.id}&commentPage=${commentPage + 1}">&raquo;</a>
+                        <a href="${pageContext.request.contextPath}/accessorydetail?id=${accessory.id}&commentPage=${commentPage + 1}">&raquo;</a>
                     </c:if>
                 </div>
             </c:if>
 
-
-
-
+            <!-- COMMENT FORM -->
             <div class="comment-form">
                 <h3>Viết bình luận</h3>
                 <form action="${pageContext.request.contextPath}/comment" method="post">
                     <input type="hidden" name="action" value="add" />
-                    <input type="hidden" name="bookId" value="${book.id}" />
+                    <input type="hidden" name="accessoryId" value="${accessory.id}" />
 
                     <div class="rating-row">
-                        <span class="rating-label">Đánh giá:</span>
+                        <span>Đánh giá:</span>
                         <div class="rating">
                             <input type="radio" id="star5" name="rating" value="5" required><label for="star5">★</label>
                             <input type="radio" id="star4" name="rating" value="4"><label for="star4">★</label>
@@ -787,8 +562,6 @@
                         </div>
                     </div>
 
-
-
                     <label>Nội dung:</label>
                     <textarea name="content" rows="4" placeholder="Viết bình luận của bạn..." required></textarea>
 
@@ -796,76 +569,25 @@
                 </form>
             </div>
 
-            <!--Goi y sach -->
-            <c:if test="${not empty relatedBooks}">
-                <div class="section-title-bar">
-                    <h2 class="section-title">Gợi ý sách cùng loại</h2>
-                </div>
-
-                <div class="related-books">
-                    <c:forEach var="item" items="${relatedBooks}">
-                        <a href="${pageContext.request.contextPath}/bookdetail?id=${item.id}" class="related-book-link">
-                            <div class="related-book-card">
-                                <div class="related-image-wrapper">
-                                    <img src="${item.imageURL}" alt="${item.title}" />
-                                    <c:if test="${item.discount > 0}">
-                                        <div class="book-discount">-${item.discount}%</div>
-                                    </c:if>
-                                </div>
-                                <div class="related-info">
-                                    <div class="related-title">${item.title}</div>
-                                    <c:set var="finalPrice" value="${item.price * (1 - (item.discount / 100.0))}" />
-                                    <div class="related-prices">
-                                        <c:choose>
-                                            <c:when test="${item.discount > 0}">
-                                                <span class="related-price-sale">
-                                                    <fmt:formatNumber value="${finalPrice}" type="number" groupingUsed="true" maxFractionDigits="0"/>đ
-                                                </span>
-                                                <span class="related-price-original">
-                                                    <fmt:formatNumber value="${item.price}" type="number" groupingUsed="true" maxFractionDigits="0"/>đ
-                                                </span>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <span class="related-price-sale">
-                                                    <fmt:formatNumber value="${item.price}" type="number" groupingUsed="true" maxFractionDigits="0"/>đ
-                                                </span>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </c:forEach>
-                </div>
-                <div class="related-more-link">
-                    <a href="${pageContext.request.contextPath}/categorybooks?categoryId=${book.categoryID}">Xem thêm >></a>
-                </div>
-            </c:if>
+            <script>
+                function toggleMenu(commentId) {
+                    const menu = document.getElementById('menu-' + commentId);
+                    menu.style.display = (menu.style.display === 'none') ? 'block' : 'none';
+                }
+                function showEditForm(commentId) {
+                    document.getElementById('content-' + commentId).style.display = 'none';
+                    document.getElementById('edit-form-' + commentId).style.display = 'block';
+                    document.getElementById('menu-' + commentId).style.display = 'none';
+                }
+                function cancelEdit(commentId) {
+                    document.getElementById('edit-form-' + commentId).style.display = 'none';
+                    document.getElementById('content-' + commentId).style.display = 'block';
+                }
+            </script>
 
 
 
         </div>
 
-        <script>
-            function toggleMenu(commentId) {
-                const menu = document.getElementById('menu-' + commentId);
-                menu.style.display = (menu.style.display === 'none') ? 'block' : 'none';
-            }
-
-            function showEditForm(commentId) {
-                document.getElementById('content-' + commentId).style.display = 'none';
-                document.getElementById('edit-form-' + commentId).style.display = 'block';
-                document.getElementById('menu-' + commentId).style.display = 'none';
-            }
-
-            function cancelEdit(commentId) {
-                document.getElementById('edit-form-' + commentId).style.display = 'none';
-                document.getElementById('content-' + commentId).style.display = 'block';
-            }
-        </script>
-
-
-
-        //hihi
     </body>
 </html>

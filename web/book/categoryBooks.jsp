@@ -202,8 +202,8 @@
             <a class="header_logo" href="${pageContext.request.contextPath}/home">
                 <img src="${pageContext.request.contextPath}/image/logo1.jpg" alt="Logo BookZone">
             </a>
-            <form class="header_search-box" action="${pageContext.request.contextPath}/search" method="get">
-                <input type="text" class="search-input" name="query" placeholder="Tìm kiếm sách...">
+            <form class="header_search-box" action="${pageContext.request.contextPath}/books" method="get">
+                <input type="text" class="search-input" name="keyword" placeholder="Tìm kiếm sách...">
                 <button type="submit" class="search-button">Tìm</button>
             </form>
             <div class="header_utilities">
@@ -213,9 +213,7 @@
                         <c:set var="cartCount" value="${cartCount + item.quantity}" />
                     </c:forEach>
                 </c:if>
-                <a href="${pageContext.request.contextPath}/offers" class="utility_link">
-                    <strong>Ưu đãi & Tiện ích</strong>
-                </a>
+
                 <a href="${pageContext.request.contextPath}/cart" class="utility_link">
                     <span class="icon">🛒</span> <strong>Giỏ hàng (${cartCount})</strong>
                 </a>

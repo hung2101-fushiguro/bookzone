@@ -1,6 +1,6 @@
 <%-- 
     Document   : registerUser
-    Created on : Jun 24, 2025, 1:13:48 PM
+    Created on : Jun 24, 2025
     Author     : Administrator
 --%>
 
@@ -32,14 +32,8 @@
             }
 
             @keyframes slideDown {
-                from {
-                    opacity: 0;
-                    transform: translateY(-20px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
+                from { opacity: 0; transform: translateY(-20px); }
+                to { opacity: 1; transform: translateY(0); }
             }
 
             h2 {
@@ -117,28 +111,27 @@
             <h2>Đăng ký tài khoản</h2>
             <form action="register" method="post">
                 <label for="username">Username:</label>
-                <input type="text" id="username" name="username"
-                       value="${param.username}" required />
+                <input type="text" id="username" name="username" value="${param.username}" required />
 
                 <label for="email">Email:</label>
-                <input type="text" id="email" name="email"
-                       value="${param.email}" required />
+                <input type="text" id="email" name="email" value="${param.email}" required />
 
                 <label for="name">Tên hiển thị:</label>
-                <input type="text" id="name" name="name"
-                       value="${param.name}" required />
+                <input type="text" id="name" name="name" value="${param.name}" required />
 
                 <label for="password">Mật khẩu:</label>
                 <input type="password" id="password" name="password" required />
 
                 <input type="submit" value="Đăng ký" />
             </form>
+
             <div style="text-align:center; margin: 20px 0;">
-                <a href="https://accounts.google.com/o/oauth2/auth?client_id=19340180186-sm87uhblq9epkqme3jhgvt4fef4sb45k.apps.googleusercontent.com&redirect_uri=http://localhost:9999/bookzone3/oauth2callback&response_type=code&scope=openid%20email%20profile&&prompt=select_account">
+                <a href="https://accounts.google.com/o/oauth2/auth?client_id=847091717027-0jr9s4bsugknikmi3gebian272eed7r1.apps.googleusercontent.com&redirect_uri=http://localhost:9999/bookzone/oauth2callback&response_type=code&scope=openid%20email%20profile&prompt=select_account">
                     <img src="https://developers.google.com/identity/images/btn_google_signin_light_normal_web.png"
                          alt="Google Sign-In" style="height:40px;">
                 </a>
             </div>
+
             <c:if test="${not empty errorMessage}">
                 <div class="error-message">${errorMessage}</div>
             </c:if>

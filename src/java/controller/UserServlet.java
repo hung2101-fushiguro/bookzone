@@ -6,8 +6,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.User;
-import userDao.UserDao;
-
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -30,21 +28,23 @@ public class UserServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String action = request.getParameter("action");
-        if (action == null) action = "list";
+        if (action == null) {
+            action = "list";
+        }
 
         String role = (String) request.getSession().getAttribute("role");
 
         try {
             switch (action) {
                 case "delete":
-                    
+
                     deleteUser(request, response);
                     break;
                 case "profile":
                     showProfile(request, response);
                     break;
                 default: // list
-                    
+
                     listUsers(request, response);
                     break;
             }
@@ -59,7 +59,9 @@ public class UserServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String action = request.getParameter("action");
-        if (action == null) action = "list";
+        if (action == null) {
+            action = "list";
+        }
 
         try {
             switch (action) {
@@ -119,7 +121,7 @@ public class UserServlet extends HttpServlet {
         }
 
         userService.updateUser(user);
-        request.getSession().setAttribute("user", user.getName());
+        request.getSession().setAttribute("user", user);
 
         response.sendRedirect(request.getContextPath() + "/user?action=profile");
     }

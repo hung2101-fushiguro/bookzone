@@ -6,6 +6,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import model.Book;
 import service.BookService;
 
@@ -209,20 +210,36 @@ public class BookServlet extends HttpServlet {
     private void searchBooks(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, ServletException, IOException {
         String keyword = request.getParameter("keyword");
+
+        // Nếu từ khóa tìm kiếm rỗng, chuyển hướng về trang books
         if (keyword == null || keyword.trim().isEmpty()) {
             response.sendRedirect("books");
             return;
         }
 
+        // Lấy thông tin vai trò từ session hoặc từ request
+        HttpSession session = request.getSession();
+        String role = (String) session.getAttribute("role"); // Hoặc lấy từ request nếu được truyền
+
+        // Tìm kiếm sách
         List<Book> books = bookService.searchBooks(keyword.trim());
 
+        // Thiết lập các thuộc tính để truyền vào JSP
         request.setAttribute("books", books);
-        request.setAttribute("keyword", keyword); // giữ lại từ khóa tìm kiếm
+        request.setAttribute("keyword", keyword); // Giữ lại từ khóa tìm kiếm
         request.setAttribute("currentPage", 1);
-        request.setAttribute("totalPages", 1); // không phân trang
+        request.setAttribute("totalPages", 1); // Không phân trang
 
-        RequestDispatcher dispatcher = request.getRequestDispatcher("book/bookList.jsp");
-        dispatcher.forward(request, response);
+        // Kiểm tra vai trò người dùng và điều hướng tới trang tương ứng
+        if ("admin".equalsIgnoreCase(role)) {
+            // Nếu là admin, chuyển đến trang bookList.jsp
+            RequestDispatcher dispatcher = request.getRequestDispatcher("book/bookList.jsp");
+            dispatcher.forward(request, response);
+        } else {
+            // Nếu là user, chuyển đến trang JSP khác
+            RequestDispatcher dispatcher = request.getRequestDispatcher("book/categoryBooks.jsp");  // Thay "userBookList.jsp" bằng trang của bạn
+            dispatcher.forward(request, response);
+        }
     }
 
     @Override

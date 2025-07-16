@@ -11,7 +11,7 @@ public interface IBookDAO {
     Book selectBook(int id);
 
     List<Book> selectAllBook();
-    
+
     public List<Book> selectNewestBooks(int limit);
 
     boolean deleteBook(int id) throws SQLException;
@@ -21,9 +21,9 @@ public interface IBookDAO {
     List<Book> selectBooksByPage(int offset, int limit);
 
     int getTotalBookCount();
-    
+
     public List<Book> getBooksByCategory(int categoryId);
-    
+
     public List<Book> getLatestBooksByCategory(int categoryId, int limit);
 
     List<Book> searchBooks(String keyword);
@@ -31,17 +31,18 @@ public interface IBookDAO {
     List<Book> searchBooks(String keyword, String sortPrice, String sortQuantity, int offset, int limit);
 
     List<Book> selectBooksByPageWithSort(String sortPrice, String sortQuantity, int offset, int limit);
-    
+
     int getSearchBookCount(String keyword);
-    
-    
+
     List<Book> getBooksByAuthor(String author);
-    
+
     List<Book> getBooksByPriceRange(double minPrice, double maxPrice);
-    
+
     List<Book> getBooksByKeywordInDescription(String keyword);
-    
-    List<Book> getBooksByCategoryName(String categoryName)throws SQLException;
-    
+
+    List<Book> getBooksByCategoryName(String categoryName) throws SQLException;
+
     List<Book> selectAllBooksWithDetails();
+
+    List<Book> getRelatedBooks(int categoryId, int excludeBookId, int limit);
 }
