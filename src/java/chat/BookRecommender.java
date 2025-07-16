@@ -48,17 +48,16 @@ public class BookRecommender {
 
     // Tìm kiếm sách theo tên (title) và trả về mô tả sách
     public String recommendByTitle(String title) throws SQLException {
-    List<Book> books = bookDao.searchBooks(title); // Tìm sách bằng tên
-    if (books.isEmpty()) {
-        return "Không tìm thấy sách với tên '" + title + "' trong kho của chúng tôi.";
+        List<Book> books = bookDao.searchBooks(title); // Tìm sách bằng tên
+        if (books.isEmpty()) {
+            return "Không tìm thấy sách với tên '" + title + "' trong kho của chúng tôi.";
+        }
+        Book book = books.get(0);  // Giả sử chỉ lấy cuốn sách đầu tiên nếu có nhiều kết quả
+        return "Thông tin sách '" + book.getTitle() + "':<br>"
+                + "Tác giả: " + book.getAuthor() + "<br>"
+                + "Giá: " + book.getPrice() + " VND<br>"
+                + "Mô tả: " + book.getDescription();
     }
-    Book book = books.get(0);  // Giả sử chỉ lấy cuốn sách đầu tiên nếu có nhiều kết quả
-    return "Thông tin sách '" + book.getTitle() + "':<br>" +
-           "Tác giả: " + book.getAuthor() + "<br>" +
-           "Giá: " + book.getPrice() + " VND<br>" +
-           "Mô tả: " + book.getDescription();
-}
-
 
     // Tìm kiếm sách theo từ khóa trong mô tả
     public List<Book> recommendByKeywordInDescription(String keyword) throws SQLException {

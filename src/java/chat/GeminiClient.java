@@ -4,36 +4,106 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kong.unirest.*;
 
+import java.util.List;
+import bookDao.BookDao;
+import model.Book;
+
 public class GeminiClient {
-    private static final String API_KEY = "AIzaSyAU4LL64Mw8t8jFWEwjHedAqobY87ZgMgs";
-    private static final String URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + API_KEY;
 
-    public static String sendPrompt(String prompt) {
-    try {
-        String contextData = "";
-        String systemPrompt = "Bạn là một AI tư vấn sách tại BookSZone. Hãy trả lời thật ngắn gọn và giới thiệu sách cụ thể trong kho sau tối đa 2 lượt trò chuyện. " +
-                "Tránh hỏi lan man. Nếu người dùng nhắc đến một thể loại, hãy gợi ý trực tiếp các cuốn sách có thể có trong hệ thống.\n\n" +
-                contextData;
+    private static final String API_KEY = "AIzaSyBWWsQspMM5WUZuQ0YuU9lm6xc7-EI24BU";
+    private static final String URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + API_KEY;
+    private static final int MAX_RETRIES = 3;
+    private static final int RETRY_DELAY_MS = 2000;
 
-        String fullPrompt = systemPrompt + "\n\nNgười dùng: " + prompt;
+    public static String chatWith(String userMessage) {
+        String bookData = getBookDataFromDB();  // Dữ liệu thật từ DB
 
-        HttpResponse<String> response = Unirest.post(URL)
-            .header("Content-Type", "application/json")
-            .body("{\"contents\":[{\"parts\":[{\"text\":\"" + fullPrompt + "\"}]}]}")
-            .asString();
+        String systemPrompt = """
+            Bạn là trợ lý AI tư vấn sách tại BookZone. Hãy tuân thủ các nguyên tắc sau:
+            1. Trả lời ngắn gọn (1-2 câu), đúng trọng tâm.
+            2. Nếu người dùng hỏi về thể loại, tác giả hoặc khoảng giá → liệt kê 3–5 sách phù hợp từ dữ liệu.
+            3. Định dạng:
+               - Gợi ý chung: [Tên sách 1], [Tên sách 2], ...
+               - Chi tiết sách: Tên - Tác giả - Giá - Mô tả (nếu có)
+            4. KHÔNG hỏi lại nếu đủ dữ liệu.
 
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode root = mapper.readTree(response.getBody());
+            DỮ LIỆU SÁCH HIỆN CÓ:
+            """ + bookData;
 
-        JsonNode textNode = root.path("candidates").get(0)
-                                 .path("content")
-                                 .path("parts").get(0)
-                                 .path("text");
+        String fullPrompt = systemPrompt + "\n\nNGƯỜI DÙNG: " + userMessage + "\nTRỢ LÝ:";
 
-        return textNode.isMissingNode() ? "Không tìm thấy nội dung trả lời." : textNode.asText();
-    } catch (Exception e) {
-        e.printStackTrace();
-        return "Lỗi gọi Gemini: " + e.getMessage();
+        for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+            try {
+                HttpResponse<String> response = Unirest.post(URL)
+                        .header("Content-Type", "application/json")
+                        .body("{\"contents\":[{\"parts\":[{\"text\":\"" + escapeJson(fullPrompt) + "\"}]}]}")
+                        .asString();
+
+                JsonNode root = new ObjectMapper().readTree(response.getBody());
+
+                if (root.has("error")) {
+                    String errorMsg = root.get("error").get("message").asText();
+                    if (errorMsg.contains("overloaded")) {
+                        Thread.sleep(RETRY_DELAY_MS);
+                        continue;
+                    }
+                    return "⚠️ Lỗi: " + errorMsg;
+                }
+
+                return extractGeminiResponse(root);
+            } catch (Exception e) {
+                e.printStackTrace();
+                if (attempt < MAX_RETRIES) {
+                    try {
+                        Thread.sleep(RETRY_DELAY_MS);
+                    } catch (InterruptedException ignored) {
+                    }
+                } else {
+                    return "⚠️ Lỗi kết nối đến Gemini";
+                }
+            }
+        }
+
+        return "⚠️ Không thể kết nối sau " + MAX_RETRIES + " lần thử";
     }
-}
+
+    // ✅ Trích xuất dữ liệu sách thật từ DB
+    private static String getBookDataFromDB() {
+        try {
+            BookDao dao = new BookDao();
+            List<Book> books = dao.selectAllBooksWithDetails();
+
+            StringBuilder sb = new StringBuilder();
+            for (Book b : books) {
+                sb.append("- ")
+                        .append(b.getTitle()).append(" - ")
+                        .append("Tác giả: ").append(b.getAuthor()).append(" - ")
+                        .append("Thể loại: ").append(b.getCategoryName()).append(" - ")
+                        .append("Giá: ").append(b.getPrice()).append(" VND - ")
+                        .append("Số lượng: ").append(b.getQuantity()).append(" - ")
+                        .append("Mô tả: ").append(b.getDescription() == null ? "Không có" : b.getDescription())
+                        .append("\n");
+            }
+
+            return sb.toString();
+        } catch (Exception e) {
+            return "Không thể tải dữ liệu sách.";
+        }
+    }
+
+    private static String extractGeminiResponse(JsonNode root) {
+        try {
+            return root.path("candidates").get(0)
+                    .path("content").path("parts").get(0)
+                    .path("text").asText();
+        } catch (Exception e) {
+            return "⚠️ Không thể đọc phản hồi từ Gemini";
+        }
+    }
+
+    private static String escapeJson(String input) {
+        return input.replace("\"", "\\\"")
+                .replace("\n", "\\n")
+                .replace("\t", "\\t");
+    }
 }

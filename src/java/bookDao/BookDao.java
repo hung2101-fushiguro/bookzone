@@ -20,12 +20,17 @@ public class BookDao implements IBookDAO {
 
     }
 
-    private static final String INSERT_BOOK_SQL =  "INSERT INTO Books (title, author, description, price, quantity, image_url, category_id, created_at, discount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String INSERT_BOOK_SQL = "INSERT INTO Books (title, author, description, price, quantity, image_url, category_id, created_at, discount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String SELECT_BOOK_BY_ID
             = "SELECT b.*, c.name AS category_name "
             + "FROM Books b "
             + "LEFT JOIN Categories c ON b.category_id = c.id "
             + "WHERE b.id = ?";
+    private static final String SELECT_ALL_BOOKS
+            = "SELECT b.id, b.title, b.author, b.description, b.price, b.quantity, b.image_url, "
+            + "b.category_id, b.created_at, b.discount, c.name AS category_name "
+            + "FROM Books b "
+            + "LEFT JOIN Categories c ON b.category_id = c.id";
 
     private static final String SELECT_ALL_BOOK = "SELECT * FROM Books";
     private static final String DELETE_BOOK_SQL = "DELETE FROM Books WHERE id = ?";
@@ -150,26 +155,25 @@ public class BookDao implements IBookDAO {
     }
 
     @Override
-public boolean updateBook(Book book) throws SQLException {
-    boolean rowUpdated;
-    try (Connection connection = DBConnection.getConnection(); PreparedStatement statement = connection.prepareStatement(UPDATE_BOOK_SQL)) {
+    public boolean updateBook(Book book) throws SQLException {
+        boolean rowUpdated;
+        try (Connection connection = DBConnection.getConnection(); PreparedStatement statement = connection.prepareStatement(UPDATE_BOOK_SQL)) {
 
-        statement.setString(1, book.getTitle());
-        statement.setString(2, book.getAuthor());
-        statement.setString(3, book.getDescription());
-        statement.setDouble(4, book.getPrice());
-        statement.setInt(5, book.getQuantity());
-        statement.setString(6, book.getImageURL());
-        statement.setInt(7, book.getCategoryID());
-        statement.setDate(8, new java.sql.Date(book.getCreated_at().getTime()));
-        statement.setInt(9, book.getDiscount());
-        statement.setInt(10, book.getId());
+            statement.setString(1, book.getTitle());
+            statement.setString(2, book.getAuthor());
+            statement.setString(3, book.getDescription());
+            statement.setDouble(4, book.getPrice());
+            statement.setInt(5, book.getQuantity());
+            statement.setString(6, book.getImageURL());
+            statement.setInt(7, book.getCategoryID());
+            statement.setDate(8, new java.sql.Date(book.getCreated_at().getTime()));
+            statement.setInt(9, book.getDiscount());
+            statement.setInt(10, book.getId());
 
-        rowUpdated = statement.executeUpdate() > 0;
+            rowUpdated = statement.executeUpdate() > 0;
+        }
+        return rowUpdated;
     }
-    return rowUpdated;
-}
-
 
     private Book extractBookFromResultSet(ResultSet rs) throws SQLException {
         Book book = new Book();
@@ -484,4 +488,21 @@ public boolean updateBook(Book book) throws SQLException {
         }
         return books;
     }
+
+    @Override
+    public List<Book> selectAllBooksWithDetails() {
+        List<Book> books = new ArrayList<>();
+        try (Connection connection = DBConnection.getConnection(); PreparedStatement ps = connection.prepareStatement(SELECT_ALL_BOOKS)) {
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Book book = extractBookFromResultSet(rs);
+                books.add(book);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return books;
+    }
+
 }

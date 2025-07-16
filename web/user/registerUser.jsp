@@ -32,8 +32,14 @@
             }
 
             @keyframes slideDown {
-                from { opacity: 0; transform: translateY(-20px); }
-                to { opacity: 1; transform: translateY(0); }
+                from {
+                    opacity: 0;
+                    transform: translateY(-20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
             }
 
             h2 {
@@ -127,12 +133,12 @@
 
                 <input type="submit" value="Đăng ký" />
             </form>
-        <div style="text-align:center; margin: 20px 0;">
-  <a href="https://accounts.google.com/o/oauth2/auth?client_id=19340180186-sm87uhblq9epkqme3jhgvt4fef4sb45k.apps.googleusercontent.com&redirect_uri=http://localhost:9999/bookzone3/oauth2callback&response_type=code&scope=openid%20email%20profile&&prompt=select_account">
-    <img src="https://developers.google.com/identity/images/btn_google_signin_light_normal_web.png"
-         alt="Google Sign-In" style="height:40px;">
-  </a>
-</div>
+            <div style="text-align:center; margin: 20px 0;">
+                <a href="https://accounts.google.com/o/oauth2/auth?client_id=19340180186-sm87uhblq9epkqme3jhgvt4fef4sb45k.apps.googleusercontent.com&redirect_uri=http://localhost:9999/bookzone3/oauth2callback&response_type=code&scope=openid%20email%20profile&&prompt=select_account">
+                    <img src="https://developers.google.com/identity/images/btn_google_signin_light_normal_web.png"
+                         alt="Google Sign-In" style="height:40px;">
+                </a>
+            </div>
             <c:if test="${not empty errorMessage}">
                 <div class="error-message">${errorMessage}</div>
             </c:if>

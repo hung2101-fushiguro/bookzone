@@ -10,8 +10,8 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet("/login-google")
 public class LoginGoogleServlet extends HttpServlet {
 
-    private static final String CLIENT_ID = "YOUR_CLIENT_ID";
-    private static final String REDIRECT_URI = "http://localhost:9999/bookzone3/oauth2callback";
+    private static final String CLIENT_ID = "19340180186-sm87uhblq9epkqme3jhgvt4fef4sb45k.apps.googleusercontent.com";
+    private static final String REDIRECT_URI = "http://localhost:9999/bookzone/oauth2callback";
     private static final String SCOPE = "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email";
     private static final String AUTH_URL = "https://accounts.google.com/o/oauth2/auth";
 

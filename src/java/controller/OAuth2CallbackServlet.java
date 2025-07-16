@@ -24,7 +24,7 @@ public class OAuth2CallbackServlet extends HttpServlet {
 
     private static final String CLIENT_ID = "19340180186-sm87uhblq9epkqme3jhgvt4fef4sb45k.apps.googleusercontent.com";
     private static final String CLIENT_SECRET = "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";
-    private static final String REDIRECT_URI = "http://localhost:9999/bookzone3/oauth2callback";
+    private static final String REDIRECT_URI = "http://localhost:9999/bookzone/oauth2callback";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
     @Override
