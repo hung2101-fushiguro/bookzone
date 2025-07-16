@@ -12,8 +12,8 @@ public class GeminiClient {
 
     private static final String API_KEY = "AIzaSyBWWsQspMM5WUZuQ0YuU9lm6xc7-EI24BU";
     private static final String URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + API_KEY;
-    private static final int MAX_RETRIES = 3;
-    private static final int RETRY_DELAY_MS = 2000;
+    private static final int MAX_RETRIES = 1;
+    private static final int RETRY_DELAY_MS = 1000;
 
     public static String chatWith(String userMessage) {
         String bookData = getBookDataFromDB();  // Dữ liệu thật từ DB

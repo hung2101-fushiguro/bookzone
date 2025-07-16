@@ -521,6 +521,107 @@
             .backToTop:hover {
                 background-color: #0b7dda;
             }
+            .ai-float-button {
+                position: fixed;
+                bottom: 80px; /* nằm phía trên nút "Back to top" */
+                right: 30px;
+                background-color: #00c853;
+                color: white;
+                font-size: 24px;
+                padding: 12px 14px;
+                border-radius: 50%;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+                text-decoration: none;
+                z-index: 1000;
+                transition: background-color 0.3s ease;
+            }
+
+            .ai-float-button:hover {
+                background-color: #009624;
+            }
+            .ai-chat-button {
+                position: fixed;
+                bottom: 90px;
+                right: 30px;
+                background-color: #00c853;
+                color: white;
+                font-size: 24px;
+                padding: 14px;
+                border-radius: 50%;
+                cursor: pointer;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+                z-index: 1001;
+            }
+
+            .ai-chat-box {
+                position: fixed;
+                bottom: 140px;
+                right: 30px;
+                width: 320px;
+                background: white;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                display: none;
+                flex-direction: column;
+                z-index: 1000;
+            }
+
+            .chat-header {
+                background-color: #00c853;
+                color: white;
+                padding: 10px;
+                font-weight: bold;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-top-left-radius: 8px;
+                border-top-right-radius: 8px;
+            }
+
+            .chat-messages {
+                padding: 10px;
+                height: 200px;
+                overflow-y: auto;
+                font-size: 14px;
+                border-top: 1px solid #eee;
+                border-bottom: 1px solid #eee;
+            }
+
+            .chat-messages .user {
+                text-align: right;
+                margin-bottom: 8px;
+                color: #007bff;
+            }
+
+            .chat-messages .bot {
+                text-align: left;
+                margin-bottom: 8px;
+                color: #333;
+            }
+
+            #chatForm {
+                display: flex;
+                padding: 10px;
+            }
+
+            #userInput {
+                flex: 1;
+                padding: 8px;
+                border-radius: 4px;
+                border: 1px solid #ccc;
+            }
+
+            #chatForm button {
+                background-color: #00c853;
+                color: white;
+                border: none;
+                margin-left: 5px;
+                padding: 8px 10px;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
 
         </style>
     </head>
@@ -734,7 +835,64 @@
                 </div>
             </div>
         </c:forEach>
+<!--        <a href="${pageContext.request.contextPath}/chat" class="ai-float-button" title="Trợ lý AI tư vấn sách">
+            🤖
+        </a>-->-->
 
+        <div class="ai-chat-button" onclick="toggleChatBox()">🤖</div>
+
+        <!-- Khung chat nổi -->
+        <div class="ai-chat-box" id="chatBox">
+            <div class="chat-header">
+                <span>Trợ lý AI BookZone</span>
+                <button onclick="toggleChatBox()">×</button>
+            </div>
+            <div class="chat-messages" id="chatMessages"></div>
+            <form id="chatForm">
+                <input type="text" id="userInput" placeholder="Nhập tin nhắn..." required />
+                <button type="submit">Gửi</button>
+            </form>
+        </div>
+
+        <script>
+            function toggleChatBox() {
+                const chatBox = document.getElementById("chatBox");
+                chatBox.style.display = (chatBox.style.display === "none" || chatBox.style.display === "") ? "flex" : "none";
+            }
+
+            document.getElementById("chatForm").addEventListener("submit", function (e) {
+                e.preventDefault();
+                const input = document.getElementById("userInput");
+                const message = input.value.trim();
+                if (message === "")
+                    return;
+
+                appendMessage("user", message);
+                input.value = "";
+
+                fetch("${pageContext.request.contextPath}/chat", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                    body: new URLSearchParams({message: message})
+                })
+                        .then(res => res.text())
+                        .then(response => {
+                            appendMessage("bot", response);
+                        })
+                        .catch(err => {
+                            appendMessage("bot", "⚠️ Lỗi khi gửi tin nhắn.");
+                        });
+            });
+
+            function appendMessage(sender, text) {
+                const chatMessages = document.getElementById("chatMessages");
+                const div = document.createElement("div");
+                div.className = sender;
+                div.textContent = text;
+                chatMessages.appendChild(div);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        </script>
 
 
     </body>

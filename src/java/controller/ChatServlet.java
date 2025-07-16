@@ -6,7 +6,11 @@ import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
+import model.ChatMessage;
+
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet(name = "ChatServlet", urlPatterns = {"/chat"})
 public class ChatServlet extends HttpServlet {
@@ -15,27 +19,37 @@ public class ChatServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Lấy nội dung người dùng gửi lên
+        // Lấy tin nhắn từ người dùng
         String userMessage = request.getParameter("message");
 
-        // Tạo prompt từ dữ liệu sách và nội dung người dùng
-        String prompt = AIBookAgent.generatePrompt(userMessage);
+        // Lấy lịch sử từ session (nếu có)
+        HttpSession session = request.getSession();
+        List<ChatMessage> history = (List<ChatMessage>) session.getAttribute("chatHistory");
+        if (history == null) {
+            history = new ArrayList<>();
+        }
 
-        // Gửi prompt tới Gemini và nhận phản hồi
+        // Tạo prompt có chứa hội thoại trước đó + tin nhắn hiện tại
+        String prompt = AIBookAgent.generatePrompt(userMessage, history);
+
+        // Gọi Gemini API để lấy phản hồi
         String aiResponse = GeminiClient.chatWith(prompt);
 
-        // Gửi phản hồi tới trang JSP
-        request.setAttribute("response", aiResponse);
-        request.setAttribute("message", userMessage); // Nếu muốn hiển thị lại message người dùng
+        // Lưu tin nhắn mới vào lịch sử
+        history.add(new ChatMessage(userMessage, aiResponse));
+        session.setAttribute("chatHistory", history);
 
-        // Điều hướng về giao diện chat
-        request.getRequestDispatcher("chat/chat.jsp").forward(request, response);
+        // Trả phản hồi dạng plain text để hiển thị trên popup
+        response.setContentType("text/plain");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(aiResponse);
     }
 
-    // (Không cần xử lý GET – hoặc có thể redirect về home nếu cần)
+    // GET: reset lịch sử trò chuyện nếu cần
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.sendRedirect("index.jsp"); // hoặc chat.jsp nếu bạn muốn
+        request.getSession().removeAttribute("chatHistory");
+        request.getRequestDispatcher("chat/chat.jsp").forward(request, response);
     }
 }

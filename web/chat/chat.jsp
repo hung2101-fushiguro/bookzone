@@ -13,7 +13,7 @@
             }
 
             .chat-box {
-                max-width: 600px;
+                max-width: 700px;
                 margin: auto;
                 background: white;
                 border-radius: 8px;
@@ -59,30 +59,45 @@
                 background-color: #0056b3;
             }
 
+            .clearfix::after {
+                content: "";
+                display: table;
+                clear: both;
+            }
+
+            #chat-messages {
+                max-height: 400px;
+                overflow-y: auto;
+                margin-bottom: 20px;
+            }
         </style>
     </head>
     <body>
         <div class="chat-box">
             <h2>💬 Tư vấn sách BookZone</h2>
 
-            <form action="chat" method="post">
+            <div id="chat-messages">
+                <c:if test="${not empty sessionScope.chatHistory}">
+                    <c:forEach var="msg" items="${sessionScope.chatHistory}">
+                        <div class="message">
+                            <div class="user">👤 Bạn:</div>
+                            <div>${msg.user}</div>
+                            <div class="user">🤖 Trợ lý AI:</div>
+                            <div class="bot">${msg.bot}</div>
+                        </div>
+                    </c:forEach>
+                </c:if>
+            </div>
+
+            <form action="${pageContext.request.contextPath}/chat" method="post">
                 <textarea name="message" placeholder="Nhập câu hỏi của bạn..."></textarea>
                 <button type="submit">Gửi</button>
             </form>
 
-            <c:if test="${not empty message}">
-                <div class="message">
-                    <div class="user">👤 Bạn:</div>
-                    <div>${message}</div>
-                </div>
-            </c:if>
+            <form action="chat" method="get">
+                <button type="submit" style="background-color: #dc3545;">🔄 Xóa lịch sử</button>
+            </form>
 
-            <c:if test="${not empty response}">
-                <div class="message">
-                    <div class="user">🤖 Trợ lý AI:</div>
-                    <div class="bot">${response}</div>
-                </div>
-            </c:if>
         </div>
     </body>
 </html>
