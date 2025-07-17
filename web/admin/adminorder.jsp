@@ -5,8 +5,36 @@
 <!DOCTYPE html>
 <html>
     <head>
+        
         <title>Quản lý đơn hàng</title>
+        <div class="top-bar">
+            <!-- Nút thêm sách -->
+            <div>
+                <a class="btn" href="${pageContext.request.contextPath}/admin/admin.jsp">⬅ Quay lại</a>
+            </div>
+        </div>  
         <style>
+            .top-bar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+
+            .btn {
+                padding: 12px 18px;
+                background-color: #4fc3f7;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                text-decoration: none;
+                font-size: 16px;
+                display: inline-block;
+                text-align: center;
+                transition: background-color 0.3s ease, transform 0.2s ease-in-out;
+            }
             body {
                 font-family: Arial, sans-serif;
                 background-color: #f8f9fa;

@@ -12,6 +12,7 @@ import model.Category;
 
 public class CategoryDao implements ICategoryDAO{
     private static final String SELECT_ALL_CATEGORY = "SELECT * FROM Categories";
+    
 
     @Override
     public List<Category> selectAllCategories() {

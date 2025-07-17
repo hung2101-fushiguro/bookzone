@@ -609,7 +609,7 @@
                     </c:forEach>
                 </c:if>
 
-                <a href="${pageContext.request.contextPath}/offers"><strong>Ưu đãi&Tiện ích</strong></a>
+                
                 <a href="${pageContext.request.contextPath}/cart"><strong>🛒 Giỏ hàng</strong> (${cartCount})</a>
             </div>
         </div>
@@ -667,7 +667,7 @@
 
                             <button type="submit" class="add-cart">🛒 Thêm vào giỏ hàng</button>
                         </form>
-                        <form action="${pageContext.request.contextPath}/checkout" method="post">
+                        <form action="${pageContext.request.contextPath}/cart" method="post">
                             <input type="hidden" name="bookId" value="${book.id}" />
                             <input type="hidden" name="quantity" value="1" />
                             <button type="submit" class="buy-now">Mua ngay</button>

@@ -124,14 +124,19 @@
                 <div class="card-title">Quản lý Người Dùng</div>
                 <a href="${pageContext.request.contextPath}/user" class="card-link">Quản lý Người Dùng</a>
             </div>
-        </div>
+        
 
         <!-- Card Quản lý Đơn Hàng -->
         <div class="dashboard-card">
             <div class="card-title">Quản lý Đơn Hàng</div>
             <a href="${pageContext.request.contextPath}/orders" class="card-link">Xem Đơn Hàng</a>
         </div>
-
+        
+        <div class="dashboard-card">
+            <div class="card-title">Quản lý Phụ kiện</div>
+            <a href="${pageContext.request.contextPath}/adminaccessory" class="card-link">Quản lý Phụ kiện</a>
+        </div>
+        </div>
 
         <!-- Đăng xuất -->
         <div style="text-align: center;">

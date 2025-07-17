@@ -21,6 +21,8 @@ public class AccessoryCategoryDao implements IAccessoryCategoryDAO {
 
     private static final String SELECT_CATEGORY_BY_ID_SQL =
             "SELECT * FROM AccessoryCategories WHERE id = ?";
+    
+
 
     @Override
     public List<AccessoryCategory> getAllCategories() throws SQLException {
