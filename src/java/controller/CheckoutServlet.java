@@ -69,73 +69,61 @@ public class CheckoutServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        response.sendRedirect(request.getContextPath() + "/cart/confirm.jsp");
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        String action = request.getParameter("action");
 
         if (user == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
-        // --- XỬ LÝ CẬP NHẬT THÔNG TIN ---
+        String action = request.getParameter("action");
+        String phone = request.getParameter("phone");
+        String address = request.getParameter("address");
+        String paymentMethod = request.getParameter("paymentMethod");
+
+        List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
+
+        // Trường hợp thiếu thông tin
+        if (phone == null || phone.trim().isEmpty() || address == null || address.trim().isEmpty()) {
+            request.setAttribute("error", "Vui lòng nhập đầy đủ địa chỉ và số điện thoại.");
+            request.setAttribute("cart", cart); // Gán lại giỏ hàng
+            request.getRequestDispatcher("/cart/confirm.jsp").forward(request, response);
+            return;
+        }
+
+        // Cập nhật thông tin người dùng
+        user.setPhone(phone);
+        user.setAddress(address);
+        session.setAttribute("user", user);
+
         if ("update".equals(action)) {
-            String phone = request.getParameter("phone");
-            String address = request.getParameter("address");
-
-            if (phone != null && address != null) {
-                user.setPhone(phone);
-                user.setAddress(address);
-                session.setAttribute("user", user); // cập nhật lại user trong session
-            }
-
-            response.sendRedirect("cart/confirm.jsp");
+            request.setAttribute("error", "Thông tin đã được cập nhật.");
+            request.setAttribute("cart", cart); // Gán lại giỏ hàng
+            request.getRequestDispatcher("/cart/confirm.jsp").forward(request, response);
             return;
         }
 
         if ("confirm".equals(action)) {
-            List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
-
-            // Trường hợp không có cart
             if (cart == null || cart.isEmpty()) {
-                response.sendRedirect("cart/cart.jsp");
+                response.sendRedirect(request.getContextPath() + "/cart/cart.jsp");
                 return;
             }
 
-            // Kiểm tra thông tin
-            if (user.getPhone() == null || user.getPhone().isEmpty()
-                    || user.getAddress() == null || user.getAddress().isEmpty()) {
-                request.setAttribute("error", "Vui lòng cung cấp đầy đủ thông tin liên hệ.");
-                request.getRequestDispatcher("cart/confirm.jsp").forward(request, response);
-                return;
-            }
-
-            // Tính tổng tiền
-            // Tính tổng tiền
             double total = cart.stream()
                     .mapToDouble(item -> item.getBook().getPrice() * item.getQuantity())
                     .sum();
 
-// Gán trạng thái cho các mục trong giỏ hàng
             for (CartItem item : cart) {
                 item.setStatus("đang xử lý");
             }
 
-// Tạo đơn hàng
             Order order = new Order();
             order.setUserId(user.getId());
             order.setTotalPrice(total);
@@ -143,30 +131,26 @@ public class CheckoutServlet extends HttpServlet {
 
             orderService.createOrderWithDetails(order, cart);
 
-// Lưu thông tin để hiển thị ở trang thankyou.jsp
             session.setAttribute("lastOrder", order);
             session.setAttribute("lastCart", cart);
             session.setAttribute("orderCompleted", true);
+            session.setAttribute("lastPaymentMethod", paymentMethod);
 
-// KHÔNG XÓA session cart
-            request.getRequestDispatcher("cart/thankyou.jsp").forward(request, response);
-
+            if ("VNPAY".equalsIgnoreCase(paymentMethod)) {
+                response.sendRedirect("cart/payment_vnpay.jsp");
+            } else if ("MOMO".equalsIgnoreCase(paymentMethod)) {
+                response.sendRedirect("cart/payment_momo.jsp");
+            } else {
+                response.sendRedirect("cart/payment_cod.jsp");
+            }
             return;
-
         }
 
-        // Nếu không rõ action thì quay về trang xác nhận
-        response.sendRedirect("cart/confirm.jsp");
+        response.sendRedirect(request.getContextPath() + "/cart/confirm.jsp");
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+        return "Servlet xử lý xác nhận đơn hàng và thanh toán";
+    }
 }

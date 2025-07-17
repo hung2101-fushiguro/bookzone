@@ -84,6 +84,7 @@ public class LoginServlet extends HttpServlet {
         HttpSession session = request.getSession();
         session.setMaxInactiveInterval(60 * 5);
         session.setAttribute("user", user);
+        session.setAttribute("role", user.getRole());
 
         // Phân quyền và điều hướng
         String role = user.getRole();

@@ -116,7 +116,12 @@ public class CartServlet extends HttpServlet {
             }
 
             session.setAttribute("cart", cart);
-            response.sendRedirect(request.getContextPath() + "/cart");
+            if ("buyNow".equals(action)) {
+                response.sendRedirect(request.getContextPath() + "/confirm");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/cart");
+            }
+
         } catch (NumberFormatException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid input");
         }

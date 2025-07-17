@@ -1,177 +1,153 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page session="true" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page session="true" %>
 <fmt:setLocale value="vi_VN" />
+<jsp:useBean id="now" class="java.util.Date" />
+
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
         <title>Xác nhận đơn hàng</title>
         <style>
-            /* CSS chung cho header (giống cart.jsp) */
-            .header_top {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 10px 30px;
-                background: linear-gradient(90deg, #2193b0, #6dd5ed);
-                color: white;
-                font-size: 14px;
-            }
-            .name_page {
-                display: flex;
-                align-items: center;
-                font-size: 24px;
-                font-weight: 300;
-                font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-                color: #27c6ee;
-                margin-left: 10px;
-            }
-            .separator {
-                margin-right: 8px;
-                font-size: 40px;
-                color: #27c6ee;
-                font-weight: 100;
-            }
-            .title-text {
-                color: #27c6ee;
-            }
-            .header_top a {
-                color: white;
-                text-decoration: none;
-                margin-left: 15px;
-            }
-            .header_top a:hover {
-                text-decoration: underline;
-            }
-            .header_main {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 15px 30px;
-                background-color: white;
-                border-bottom: 2px solid #e0e0e0;
-            }
-            .header_logo img {
-                height: 80px;
-                width: auto;
-            }
-            .header_logo_with_title {
-                display: flex;
-                align-items: center;
-            }
-
-            /* CSS riêng cho trang confirm */
             body {
                 font-family: Arial, sans-serif;
                 background-color: #f5f5f5;
                 margin: 0;
                 padding: 0;
             }
+
             .container {
-                max-width: 600px;
+                max-width: 800px;
                 margin: 30px auto;
                 background: white;
                 padding: 30px;
                 border-radius: 8px;
                 box-shadow: 0 0 10px rgba(0,0,0,0.1);
             }
+
             h2 {
                 color: #27c6ee;
-                margin-bottom: 20px;
                 text-align: center;
+                margin-bottom: 30px;
             }
+
             label {
                 font-weight: bold;
                 display: block;
                 margin-top: 15px;
-                color: #555;
+                color: #333;
             }
+
             input[type="text"] {
                 width: 100%;
                 padding: 10px;
                 margin-top: 5px;
-                border: 1px solid #ddd;
+                border: 1px solid #ccc;
                 border-radius: 4px;
-                font-size: 16px;
             }
-            .buttons {
-                margin-top: 25px;
+
+            .payment-options {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 20px;
+            }
+
+            .payment-card {
+                width: 30%;
                 text-align: center;
+                border: 2px solid #ddd;
+                padding: 15px;
+                border-radius: 10px;
+                background-color: #f0faff;
             }
+
+            .payment-card img {
+                height: 50px;
+                margin-bottom: 10px;
+            }
+
+            .buttons {
+                text-align: center;
+                margin-top: 30px;
+            }
+
             button {
-                padding: 12px 25px;
-                margin: 0 10px;
                 background: linear-gradient(90deg, #2193b0, #6dd5ed);
                 color: white;
                 border: none;
-                border-radius: 4px;
+                border-radius: 6px;
+                padding: 12px 25px;
                 font-weight: bold;
-                cursor: pointer;
                 font-size: 16px;
-                transition: all 0.3s;
+                margin: 0 10px;
+                cursor: pointer;
             }
+
             button:hover {
                 background: linear-gradient(90deg, #1a7a8f, #5cc5e0);
-                transform: translateY(-2px);
             }
+
             .info {
+                margin-top: 30px;
                 background: #f8f9fa;
-                padding: 20px;
-                margin-top: 25px;
-                border-radius: 5px;
+                padding: 15px;
                 border-left: 4px solid #27c6ee;
             }
+
             .info p {
                 margin: 8px 0;
-                color: #333;
             }
-            .info strong {
-                color: #27c6ee;
-            }
+
             .error-message {
-                color: #d70018;
-                font-weight: bold;
+                color: red;
                 text-align: center;
                 margin: 15px 0;
+            }
+
+            /* === Bảng chi tiết giỏ hàng === */
+            .cart-details {
+                margin-top: 40px;
+            }
+
+            .cart-details h3 {
+                color: #00bcd4;
+                margin-bottom: 15px;
+            }
+
+            .cart-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            .cart-table th, .cart-table td {
+                border: 1px solid #ddd;
                 padding: 10px;
-                background-color: #ffecec;
-                border-radius: 4px;
+                text-align: left;
+            }
+
+            .cart-table th {
+                background-color: #e8f6ff;
+                color: #333;
+            }
+
+            .cart-table tr:last-child {
+                font-weight: bold;
+                background-color: #f9f9f9;
+            }
+
+            .cart-table td:last-child {
+                text-align: right;
+            }
+
+            .cart-table td:nth-child(3),
+            .cart-table td:nth-child(4) {
+                text-align: right;
             }
         </style>
     </head>
     <body>
-        <%-- HEADER GIỐNG CART.JSP --%>
-        <div class="header_top">
-            <div class="header_contact">Hotline: <strong>0938 424 289</strong></div>
-            <div class="header_account">
-                <c:choose>
-                    <c:when test="${not empty sessionScope.user}">
-                        <span class="header_login">${sessionScope.user.name}</span>
-                        <a class="header_login" href="${pageContext.request.contextPath}/logout">| Đăng xuất</a>
-                    </c:when>
-                    <c:otherwise>
-                        <a class="header_login" href="${pageContext.request.contextPath}/login">Đăng Nhập</a>
-                        <a class="header_login" href="${pageContext.request.contextPath}/register">| Đăng ký</a>
-                    </c:otherwise>
-                </c:choose>
-            </div>
-        </div>
-
-        <div class="header_main">
-            <div class="header_logo_with_title">
-                <a class="header_logo" href="${pageContext.request.contextPath}/home">
-                    <img src="${pageContext.request.contextPath}/image/logo1.jpg" alt="Logo BookZone">
-                </a>
-                <div class="name_page">
-                    <span class="separator">|</span>
-                    <span class="title-text">Xác nhận đơn hàng</span>
-                </div>
-            </div>
-        </div>
-
-        <%-- NỘI DUNG CHÍNH --%>
         <div class="container">
             <h2>Xác nhận thông tin đơn hàng</h2>
 
@@ -179,61 +155,83 @@
                 <div class="error-message">${requestScope.error}</div>
             </c:if>
 
-            <form action="${pageContext.request.contextPath}/update-contact" method="post">
+            <form action="${pageContext.request.contextPath}/checkout" method="post">
                 <label for="address">Địa chỉ nhận hàng:</label>
-                <input type="text" id="address" name="address" 
-                       value="${sessionScope.user.address != null ? sessionScope.user.address : ''}" 
-                       required placeholder="Ví dụ: Số 1, Đường ABC, Quận XYZ">
+                <input type="text" id="address" name="address"
+                       value="${sessionScope.user.address != null ? sessionScope.user.address : ''}"
+                       required placeholder="Nhập địa chỉ của bạn">
 
                 <label for="phone">Số điện thoại:</label>
-                <input type="text" id="phone" name="phone" 
-                       value="${sessionScope.user.phone != null ? sessionScope.user.phone : ''}" 
-                       required placeholder="Ví dụ: 0912345678">
+                <input type="text" id="phone" name="phone"
+                       value="${sessionScope.user.phone != null ? sessionScope.user.phone : ''}"
+                       required placeholder="Nhập số điện thoại của bạn">
+
+                <label>Chọn phương thức thanh toán:</label>
+                <div class="payment-options">
+                    <label class="payment-card" for="cod">
+                        <input type="radio" id="cod" name="paymentMethod" value="COD" checked>
+                        <img src="https://www.shutterstock.com/image-vector/simple-vector-red-cod-cash-260nw-2261348455.jpg" alt="COD">
+                        <span>Thanh toán COD</span>
+                    </label>
+
+                    <label class="payment-card" for="vnpay">
+                        <input type="radio" id="vnpay" name="paymentMethod" value="VNPAY">
+                        <img src="https://vinadesign.vn/uploads/images/2023/05/vnpay-logo-vinadesign-25-12-57-55.jpg" alt="VNPay">
+                        <span>VNPay</span>
+                    </label>
+
+                    <label class="payment-card" for="momo">
+                        <input type="radio" id="momo" name="paymentMethod" value="MOMO">
+                        <img src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png" alt="Momo">
+                        <span>Momo</span>
+                    </label>
+                </div>
 
                 <div class="buttons">
                     <button type="submit" name="action" value="update">Cập nhật thông tin</button>
-                    <button type="submit" name="action" value="confirm">Hoàn tất đặt hàng</button>
+                    <button type="submit" name="action" value="confirm">Xác nhận đặt hàng</button>
                 </div>
             </form>
 
             <div class="info">
                 <p><strong>Tên khách hàng:</strong> ${sessionScope.user.name}</p>
                 <p><strong>Email:</strong> ${sessionScope.user.email}</p>
-                <p><strong>Thời gian đặt hàng:</strong> <fmt:formatDate value="<%= new java.util.Date()%>" pattern="HH:mm dd/MM/yyyy" /></p>
+                <p><strong>Thời gian đặt hàng:</strong> <fmt:formatDate value="${now}" pattern="HH:mm dd/MM/yyyy" /></p>
             </div>
-            <c:if test="${not empty sessionScope.cart}">
-                <h3 style="margin-top: 30px; color: #27c6ee;">Chi tiết giỏ hàng</h3>
-                <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-                    <thead style="background-color: #f0f8ff;">
-                        <tr>
-                            <th style="padding: 10px; border: 1px solid #ddd;">Sản phẩm</th>
-                            <th style="padding: 10px; border: 1px solid #ddd;">Số lượng</th>
-                            <th style="padding: 10px; border: 1px solid #ddd;">Đơn giá</th>
-                            <th style="padding: 10px; border: 1px solid #ddd;">Thành tiền</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <c:set var="total" value="0" />
-                        ...
-                        <c:forEach var="item" items="${sessionScope.cart}">
+
+            <c:if test="${not empty cart}">
+                <div class="cart-details">
+                    <h3>Chi tiết giỏ hàng</h3>
+                    <table class="cart-table">
+                        <thead>
                             <tr>
-                                <td style="padding: 10px; border: 1px solid #ddd;">${item.book.title}</td>
-                                <td style="padding: 10px; border: 1px solid #ddd;">${item.quantity}</td>
-                                <td style="padding: 10px; border: 1px solid #ddd;"><fmt:formatNumber value="${item.book.price}" type="number" /> ₫</td>
-                                <td style="padding: 10px; border: 1px solid #ddd;"><fmt:formatNumber value="${item.book.price * item.quantity}" type="number" /> ₫</td>
+                                <th>Sản phẩm</th>
+                                <th>Số lượng</th>
+                                <th>Đơn giá</th>
+                                <th>Thành tiền</th>
                             </tr>
-                            <c:set var="total" value="${total + (item.book.price * item.quantity)}" />
-
-
-                        </c:forEach>
-                        <tr style="font-weight: bold; background-color: #f9f9f9;">
-                            <td colspan="3" style="padding: 10px; text-align: right; border: 1px solid #ddd;">Tổng cộng:</td>
-                            <td style="padding: 10px; border: 1px solid #ddd;"><fmt:formatNumber value="${total}" type="number" /> ₫</td>
-                        </tr>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <c:set var="total" value="0"/>
+                            <c:forEach var="item" items="${cart}">
+                                <tr>
+                                    <td>${item.book.title}</td>
+                                    <td>${item.quantity}</td>
+                                    <td><fmt:formatNumber value="${item.book.price}" type="number" groupingUsed="true"/> đ</td>
+                                    <td>
+                                        <fmt:formatNumber value="${item.book.price * item.quantity}" type="number" groupingUsed="true"/> đ
+                                        <c:set var="total" value="${total + item.book.price * item.quantity}" />
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                            <tr>
+                                <td colspan="3" style="text-align: right;">Tổng cộng:</td>
+                                <td><fmt:formatNumber value="${total}" type="number" groupingUsed="true"/> đ</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </c:if>
-
         </div>
         <jsp:include page="/footer.jsp" />
     </body>

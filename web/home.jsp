@@ -658,8 +658,8 @@
             <a class="header_logo" href="${pageContext.request.contextPath}/home">
                 <img src="${pageContext.request.contextPath}/image/logo1.jpg" alt="Logo BookZone">
             </a>
-            <form class="header_search-box" action="${pageContext.request.contextPath}/search" method="get">
-                <input type="text" class="search-input" name="query" placeholder="Tìm kiếm sách...">
+            <form class="header_search-box" action="${pageContext.request.contextPath}/books" method="get">
+                <input type="text" class="search-input" name="keyword" placeholder="Tìm kiếm sách...">
                 <button type="submit" class="search-button">Tìm</button>
             </form>
             <div class="header_utilities">
@@ -695,6 +695,7 @@
                     <li><a href="categorybooks?categoryId=8">Sách kĩ năng sống</a></li>
                     <li><a href="categorybooks?categoryId=9">Văn học nước ngoài</a></li>
                     <li><a href="categorybooks?categoryId=10">Manga</a></li>
+                    <li><a href="accessorylist">Phụ kiện sách</a></li>
                 </ul>
             </div>
 

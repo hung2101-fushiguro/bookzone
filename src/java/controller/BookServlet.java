@@ -13,7 +13,6 @@ import service.BookService;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Locale.Category;
 import service.CategoryService;
 
 @WebServlet(name = "BookServlet", urlPatterns = {"/books"})

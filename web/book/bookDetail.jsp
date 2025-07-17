@@ -597,8 +597,8 @@
             <a class="header_logo" href="${pageContext.request.contextPath}/home">
                 <img src="${pageContext.request.contextPath}/image/logo1.jpg" alt="BookZone Logo">
             </a>
-            <form class="header_search-box" action="${pageContext.request.contextPath}/search" method="get">
-                <input type="text" class="search-input" name="query" placeholder="Tìm kiếm sách...">
+            <form class="header_search-box" action="${pageContext.request.contextPath}/books" method="get">
+                <input type="text" class="search-input" name="keyword" placeholder="Tìm kiếm sách...">
                 <button type="submit" class="search-button">Tìm</button>
             </form>
             <div class="header_utilities">
@@ -667,9 +667,10 @@
 
                             <button type="submit" class="add-cart">🛒 Thêm vào giỏ hàng</button>
                         </form>
-                        <form action="${pageContext.request.contextPath}/checkout" method="post">
+                        <form action="${pageContext.request.contextPath}/cart" method="post">
                             <input type="hidden" name="bookId" value="${book.id}" />
                             <input type="hidden" name="quantity" value="1" />
+                            <input type="hidden" name="action" value="buyNow" />
                             <button type="submit" class="buy-now">Mua ngay</button>
                         </form>
                     </div>

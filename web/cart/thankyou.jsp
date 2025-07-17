@@ -230,9 +230,17 @@
                         <span class="info-value"><fmt:formatDate value="<%= new java.util.Date()%>" pattern="HH:mm dd/MM/yyyy" /></span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label">Phương thức:</span>
-                        <span class="info-value">Thanh toán khi nhận hàng</span>
-                    </div>
+    <span class="info-label">Phương thức:</span>
+    <span class="info-value">
+        <c:choose>
+            <c:when test="${sessionScope.lastPaymentMethod == 'COD'}">Thanh toán khi nhận hàng</c:when>
+            <c:when test="${sessionScope.lastPaymentMethod == 'MOMO'}">Thanh toán qua ví Momo</c:when>
+            <c:when test="${sessionScope.lastPaymentMethod == 'VNPAY'}">Thanh toán qua VNPAY</c:when>
+            <c:otherwise>Không xác định</c:otherwise>
+        </c:choose>
+    </span>
+</div>
+
                     <div class="info-row">
                         <span class="info-label">Tình trạng:</span>
                         <span class="info-value">${sessionScope.lastOrder.status}</span>
@@ -282,3 +290,4 @@
         <jsp:include page="/footer.jsp" />
     </body>
 </html>
+
