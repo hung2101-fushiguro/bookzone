@@ -298,7 +298,7 @@
             .category-section {
                 background-color: #fff;
                 padding: 40px 20px;
-                margin-bottom: 60px;
+                margin-bottom: 15px;
                 border-radius: 8px;
                 box-shadow: 0 4px 10px rgba(0,0,0,0.05);
                 position: relative;
@@ -593,7 +593,7 @@
             <div class="main_content">
                 <%-- BANNER SLIDER --%>
                 <div class="slider-container-alt">
-                    <div class="slide active"><img src="image/banner1.jpg" alt="Banner 1"></div>
+                    <div class="slide active"><img src="image/banner1_1.jpg" alt="Banner 1"></div>
                     <div class="slide"><img src="image/banner2.jpg" alt="Banner 2"></div>
                     <div class="slide"><img src="image/banner3.jpg" alt="Banner 3"></div>
                     <div class="slide"><img src="image/banner4.jpg" alt="Banner 4"></div>
@@ -757,6 +757,7 @@
             </div>
         </c:forEach>
 
+<jsp:include page="/footer.jsp" />
 
 
     </body>

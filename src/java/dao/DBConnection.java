@@ -12,9 +12,9 @@ import java.util.logging.Logger;
 
 public class DBConnection {
     public static String driverName = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
-    public static String dbURL = "jdbc:sqlserver://localhost:1433;databaseName=BookZone;encrypt=true;trustServerCertificate=true;";
+    public static String dbURL = "jdbc:sqlserver://localhost:1433;databaseName=BookZone;";
     public static String userDB = "sa";
-    public static String passDB = "123";
+    public static String passDB = "123456";
     
     public static Connection getConnection(){
         Connection con = null;
@@ -30,7 +30,7 @@ public class DBConnection {
     public static void main(String[] args) {
         try(Connection con = getConnection()){
             if(con!=null)
-                System.out.println(" Connect to BookZone Success");
+                System.out.println(" Connect to BOOKZONE Success");
         } catch(SQLException ex){
             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
         }

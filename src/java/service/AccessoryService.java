@@ -37,4 +37,24 @@ public class AccessoryService implements IAccessoryService {
     public Accessory getById(int id) throws SQLException {
         return accessoryDAO.getById(id);
     }
+
+    @Override
+    public void updateAccessory(Accessory accessory) throws SQLException {
+        accessoryDAO.updateAccessory(accessory);
+    }
+
+    @Override
+    public void deleteAccessory(int id) throws SQLException {
+        accessoryDAO.deleteAccessory(id);
+    }
+
+    public List<Accessory> selectAccessoriesByPage(int page, int limit) {
+        int offset = (page - 1) * limit;  // Tính toán offset từ trang hiện tại
+        return accessoryDAO.selectAccessoriesByPage(offset, limit);
+    }
+
+    @Override
+    public int getTotalAccessoryCount() {
+        return accessoryDAO.getTotalAccessoryCount();
+    }
 }

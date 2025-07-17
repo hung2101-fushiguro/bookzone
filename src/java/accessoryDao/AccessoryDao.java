@@ -33,6 +33,20 @@ public class AccessoryDao implements IAccessoryDAO {
             = "INSERT INTO Accessory (name, description, price, quantity, image_url, category_id, created_at) "
             + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
+    private static final String UPDATE_ACCESSORY_SQL
+            = "UPDATE Accessory SET name = ?, description = ?, price = ?, quantity = ?, image_url = ?, category_id = ?, created_at = ? WHERE id = ?";
+
+    private static final String DELETE_ACCESSORY_SQL
+            = "DELETE FROM Accessory WHERE id = ?";
+
+    private static final String SELECT_ACCESSORIES_BY_PAGE
+            = "SELECT a.*, c.name AS category_name "
+            + "FROM Accessories a "
+            + "LEFT JOIN AccessoryCategories c ON a.category_id = c.id "
+            + "ORDER BY a.id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
+    private static final String COUNT_ALL_ACCESSORIES = "SELECT COUNT(*) FROM Accessories";
+
     private final IAccessoryCategoryDAO categoryDAO;
 
     public AccessoryDao() {
@@ -112,4 +126,71 @@ public class AccessoryDao implements IAccessoryDAO {
 
         return accessory;
     }
+
+    @Override
+    public void updateAccessory(Accessory accessory) throws SQLException {
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(UPDATE_ACCESSORY_SQL)) {
+
+            ps.setString(1, accessory.getName());
+            ps.setString(2, accessory.getDescription());
+            ps.setDouble(3, accessory.getPrice());
+            ps.setInt(4, accessory.getQuantity());
+            ps.setString(5, accessory.getImageUrl());
+            ps.setInt(6, accessory.getCategory().getId());
+            ps.setString(7, accessory.getCreatedAt());
+            ps.setInt(8, accessory.getId());
+
+            ps.executeUpdate();
+        }
+    }
+
+    @Override
+    public void deleteAccessory(int id) throws SQLException {
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(DELETE_ACCESSORY_SQL)) {
+
+            ps.setInt(1, id);
+
+            ps.executeUpdate();
+        }
+    }
+
+    @Override
+    public List<Accessory> selectAccessoriesByPage(int offset, int limit) {
+        List<Accessory> accessories = new ArrayList<>();
+
+        try (Connection connection = DBConnection.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ACCESSORIES_BY_PAGE)) {
+
+            // Set offset và limit cho truy vấn
+            preparedStatement.setInt(1, offset);
+            preparedStatement.setInt(2, limit);
+
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                Accessory accessory = extractAccessory(rs);
+                accessories.add(accessory);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return accessories;
+    }
+
+    @Override
+    public int getTotalAccessoryCount() {
+        int count = 0;
+
+        try (Connection connection = DBConnection.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(COUNT_ALL_ACCESSORIES)) {
+
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return count;
+    }
+
 }

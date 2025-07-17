@@ -1,7 +1,9 @@
 package service;
 
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
+import model.GoogleUser;
 import model.User;
 import userDao.IUserDAO;
 import userDao.UserDao;
@@ -52,5 +54,38 @@ public class UserService implements IUserService {
     // Optional: nếu cần dùng thêm
     public User getUserByUsername(String username) throws SQLException {
         return userDao.getByUsername(username);
+    }
+    
+    public boolean updatePasswordByEmail(String email, String newPassword) throws SQLException {
+    return userDao.updatePasswordByEmail(email, newPassword);
+}
+
+
+    public User findOrCreateByGoogleUser(GoogleUser googleUser) {
+        User user = userDao.selectUserByEmail(googleUser.getEmail());
+        if (user != null) {
+            return user;
+        }
+
+        user = new User();
+        user.setUsername(googleUser.getEmail());
+        user.setEmail(googleUser.getEmail());
+        user.setPassword("");  // hoặc null nếu thích
+        user.setName(googleUser.getName());
+        user.setAvatarUrl(googleUser.getPicture());
+        user.setProvider("google");
+        user.setProviderId(googleUser.getEmail());
+        user.setRole("user");
+        user.setCreatedAt(new Date());
+        user.setAddress("");
+        user.setPhone("");
+
+        try {
+            userDao.insertUser(user);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return user;
     }
 }
