@@ -541,85 +541,93 @@
             }
             .ai-chat-button {
                 position: fixed;
-                bottom: 90px;
+                bottom: 30px;
                 right: 30px;
-                background-color: #00c853;
+                background: #4a90e2;
                 color: white;
-                font-size: 24px;
-                padding: 14px;
+                padding: 12px;
                 border-radius: 50%;
+                font-size: 20px;
                 cursor: pointer;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-                z-index: 1001;
+                box-shadow: 0 0 10px rgba(0,0,0,0.2);
             }
 
             .ai-chat-box {
+                display: none;
                 position: fixed;
-                bottom: 140px;
+                bottom: 90px;
                 right: 30px;
                 width: 320px;
                 background: white;
-                border: 1px solid #ccc;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-                display: none;
+                border: 1px solid #ddd;
+                border-radius: 10px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
                 flex-direction: column;
-                z-index: 1000;
+                overflow: hidden;
+                z-index: 9999;
             }
 
             .chat-header {
-                background-color: #00c853;
+                background: #4a90e2;
                 color: white;
                 padding: 10px;
                 font-weight: bold;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                border-top-left-radius: 8px;
-                border-top-right-radius: 8px;
             }
 
-            .chat-messages {
-                padding: 10px;
-                height: 200px;
+            .chat-body {
+                height: 300px;
                 overflow-y: auto;
-                font-size: 14px;
-                border-top: 1px solid #eee;
-                border-bottom: 1px solid #eee;
+                padding: 10px;
+                background: #f9f9f9;
             }
 
-            .chat-messages .user {
-                text-align: right;
-                margin-bottom: 8px;
-                color: #007bff;
-            }
-
-            .chat-messages .bot {
-                text-align: left;
-                margin-bottom: 8px;
-                color: #333;
-            }
-
-            #chatForm {
+            .chat-input-area {
                 display: flex;
                 padding: 10px;
+                border-top: 1px solid #eee;
+                background: #fff;
             }
 
-            #userInput {
+            .chat-input-area input {
                 flex: 1;
                 padding: 8px;
-                border-radius: 4px;
                 border: 1px solid #ccc;
+                border-radius: 4px;
+                margin-right: 5px;
             }
 
-            #chatForm button {
-                background-color: #00c853;
+            .chat-input-area button {
+                background: #4a90e2;
                 color: white;
                 border: none;
-                margin-left: 5px;
-                padding: 8px 10px;
+                padding: 8px 12px;
                 border-radius: 4px;
                 cursor: pointer;
+            }
+
+            .chat-message {
+                margin: 5px 0;
+                padding: 8px 12px;
+                border-radius: 15px;
+                max-width: 80%;
+                line-height: 1.4;
+                word-wrap: break-word;
+            }
+
+            .user-message {
+                background-color: #d1ecf1;
+                align-self: flex-end;
+                margin-left: auto;
+            }
+
+            .ai-message {
+                background-color: #e2e3e5;
+                align-self: flex-start;
+                margin-right: auto;
+                white-space: pre-wrap;
             }
 
 
@@ -839,60 +847,65 @@
             🤖
         </a>-->-->
 
+        <!-- Chat button -->
         <div class="ai-chat-button" onclick="toggleChatBox()">🤖</div>
 
-        <!-- Khung chat nổi -->
+        <!-- Chat box -->
         <div class="ai-chat-box" id="chatBox">
             <div class="chat-header">
                 <span>Trợ lý AI BookZone</span>
                 <button onclick="toggleChatBox()">×</button>
             </div>
-            <div class="chat-messages" id="chatMessages"></div>
-            <form id="chatForm">
-                <input type="text" id="userInput" placeholder="Nhập tin nhắn..." required />
-                <button type="submit">Gửi</button>
-            </form>
+            <div class="chat-body" id="chatBody"></div>
+            <div class="chat-input-area">
+                <input type="text" id="userInput" placeholder="Nhập câu hỏi..." onkeypress="handleKey(event)" />
+                <button onclick="sendMessage()">Gửi</button>
+            </div>
         </div>
+
+
 
         <script>
             function toggleChatBox() {
-                const chatBox = document.getElementById("chatBox");
-                chatBox.style.display = (chatBox.style.display === "none" || chatBox.style.display === "") ? "flex" : "none";
+                const box = document.getElementById("chatBox");
+                box.style.display = box.style.display === "flex" ? "none" : "flex";
             }
 
-            document.getElementById("chatForm").addEventListener("submit", function (e) {
-                e.preventDefault();
+            function handleKey(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            }
+
+            function sendMessage() {
                 const input = document.getElementById("userInput");
                 const message = input.value.trim();
-                if (message === "")
+                if (!message)
                     return;
 
-                appendMessage("user", message);
+                appendMessage(message, "user");
                 input.value = "";
 
-                fetch("${pageContext.request.contextPath}/chat", {
+                fetch("chat", {
                     method: "POST",
                     headers: {"Content-Type": "application/x-www-form-urlencoded"},
-                    body: new URLSearchParams({message: message})
+                    body: "message=" + encodeURIComponent(message)
                 })
                         .then(res => res.text())
-                        .then(response => {
-                            appendMessage("bot", response);
-                        })
-                        .catch(err => {
-                            appendMessage("bot", "⚠️ Lỗi khi gửi tin nhắn.");
-                        });
-            });
+                        .then(data => appendMessage(data, "ai"))
+                        .catch(err => appendMessage("⚠️ Lỗi kết nối.", "ai"));
+            }
 
-            function appendMessage(sender, text) {
-                const chatMessages = document.getElementById("chatMessages");
-                const div = document.createElement("div");
-                div.className = sender;
-                div.textContent = text;
-                chatMessages.appendChild(div);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
+            function appendMessage(text, sender) {
+                const chatBody = document.getElementById("chatBody");
+                const msg = document.createElement("div");
+                msg.className = "chat-message " + (sender === "user" ? "user-message" : "ai-message");
+                msg.innerText = text;
+                chatBody.appendChild(msg);
+                chatBody.scrollTop = chatBody.scrollHeight;
             }
         </script>
+
 
 
     </body>

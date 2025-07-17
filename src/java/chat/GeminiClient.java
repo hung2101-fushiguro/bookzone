@@ -16,19 +16,25 @@ public class GeminiClient {
     private static final int RETRY_DELAY_MS = 1000;
 
     public static String chatWith(String userMessage) {
-        String bookData = getBookDataFromDB();  // Dữ liệu thật từ DB
+        String bookData = getBookDataFromDB();
 
-        String systemPrompt = """
-            Bạn là trợ lý AI tư vấn sách tại BookZone. Hãy tuân thủ các nguyên tắc sau:
-            1. Trả lời ngắn gọn (1-2 câu), đúng trọng tâm.
-            2. Nếu người dùng hỏi về thể loại, tác giả hoặc khoảng giá → liệt kê 3–5 sách phù hợp từ dữ liệu.
-            3. Định dạng:
-               - Gợi ý chung: [Tên sách 1], [Tên sách 2], ...
-               - Chi tiết sách: Tên - Tác giả - Giá - Mô tả (nếu có)
-            4. KHÔNG hỏi lại nếu đủ dữ liệu.
+       String systemPrompt = """
+Bạn là trợ lý AI thông minh tại BookZone, có nhiệm vụ tư vấn sách cho người dùng. Hãy tuân thủ các nguyên tắc sau:
 
-            DỮ LIỆU SÁCH HIỆN CÓ:
-            """ + bookData;
+1. Trả lời ngắn gọn (1–2 câu), đúng trọng tâm, dễ hiểu.
+2. Nếu người dùng nhắc đến thể loại (ví dụ: trinh thám, kinh dị, học thuật, anime, manga...) hoặc nói "mình thích..." → phân tích sở thích và gợi ý 3–5 sách phù hợp từ dữ liệu theo định dạng:
+
+1. Tên sách - Tác giả - Giá VND  
+   Mô tả ngắn 1 dòng.
+2. ...
+
+3. Nếu người dùng hỏi về khoảng giá, tác giả hoặc tên sách → tìm các sách khớp trong dữ liệu.
+4. Luôn cố gắng sử dụng thông tin từ dữ liệu có sẵn để tư vấn chính xác.
+5. KHÔNG hỏi lại nếu đã có đủ dữ liệu để trả lời.
+6. Nếu không tìm thấy sách phù hợp, hãy nói nhẹ nhàng rằng không có thông tin phù hợp trong kho dữ liệu hiện tại.
+
+DỮ LIỆU SÁCH HIỆN CÓ:
+""" + bookData;
 
         String fullPrompt = systemPrompt + "\n\nNGƯỜI DÙNG: " + userMessage + "\nTRỢ LÝ:";
 
@@ -67,7 +73,6 @@ public class GeminiClient {
         return "⚠️ Không thể kết nối sau " + MAX_RETRIES + " lần thử";
     }
 
-    // ✅ Trích xuất dữ liệu sách thật từ DB
     private static String getBookDataFromDB() {
         try {
             BookDao dao = new BookDao();

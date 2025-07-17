@@ -11,6 +11,7 @@ import model.ChatMessage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import model.User;
 
 @WebServlet(name = "ChatServlet", urlPatterns = {"/chat"})
 public class ChatServlet extends HttpServlet {
@@ -28,9 +29,11 @@ public class ChatServlet extends HttpServlet {
         if (history == null) {
             history = new ArrayList<>();
         }
+        
+        User user = (User) session.getAttribute("user");
 
         // Tạo prompt có chứa hội thoại trước đó + tin nhắn hiện tại
-        String prompt = AIBookAgent.generatePrompt(userMessage, history);
+        String prompt = AIBookAgent.generatePrompt(userMessage, history, user);
 
         // Gọi Gemini API để lấy phản hồi
         String aiResponse = GeminiClient.chatWith(prompt);

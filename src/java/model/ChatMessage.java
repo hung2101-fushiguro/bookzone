@@ -10,31 +10,31 @@ package model;
  */
 public class ChatMessage {
 
-    public String user;
-    public String bot;
+    public String userMessage;
+    public String aiResponse;
 
-    public String getUser() {
-        return user;
+    public String getUserMessage() {
+        return userMessage;
     }
 
-    public void setUser(String user) {
-        this.user = user;
+    public void setUserMessage(String userMessage) {
+        this.userMessage = userMessage;
     }
 
-    public String getBot() {
-        return bot;
+    public String getAiResponse() {
+        return aiResponse;
     }
 
-    public void setBot(String bot) {
-        this.bot = bot;
+    public void setAiResponse(String aiResponse) {
+        this.aiResponse = aiResponse;
     }
 
     public ChatMessage() {
     }
 
     public ChatMessage(String user, String bot) {
-        this.user = user;
-        this.bot = bot;
+        this.userMessage = user;
+        this.aiResponse = bot;
     }
 
 }
