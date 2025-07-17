@@ -29,4 +29,6 @@ public interface IUserDAO {
 
     // Lấy người dùng theo email
     User selectUserByEmail(String email);
+
+    boolean updatePasswordByEmail(String email, String newPassword) throws SQLException;
 }

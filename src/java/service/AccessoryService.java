@@ -47,6 +47,7 @@ public class AccessoryService implements IAccessoryService {
         accessoryDAO.deleteAccessory(id);
     }
 
+    @Override
     public List<Accessory> selectAccessoriesByPage(int page, int limit) {
         int offset = (page - 1) * limit;  // Tính toán offset từ trang hiện tại
         return accessoryDAO.selectAccessoriesByPage(offset, limit);

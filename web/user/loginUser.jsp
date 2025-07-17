@@ -123,6 +123,16 @@
             .signup-link a:hover {
                 text-decoration: underline;
             }
+
+            .success-message {
+                margin-top: 16px;
+                background-color: #d4edda;
+                color: #155724;
+                padding: 10px;
+                border-radius: 8px;
+                text-align: center;
+            }
+
         </style>
     </head>
     <body>
@@ -136,11 +146,17 @@
                 <label for="password">Password:</label>
                 <input type="password" id="password" name="password" required />
 
+
                 <div class="remember-me">
                     <label>
                         <input type="checkbox" name="rememberMe" />
                         Remember Me
                     </label>
+                </div>
+                <div style="text-align: right; margin-top: 8px;">
+                    <a href="${pageContext.request.contextPath}/forgot-password" style="font-size: 13px; color: #3b5998; text-decoration: none;">
+                        Quên mật khẩu?
+                    </a>
                 </div>
 
                 <input type="submit" value="Login" />
@@ -150,6 +166,12 @@
                 <div class="error-message">${errorMessage}</div>
             </c:if>
 
+            <c:if test="${not empty successMessage}">
+                <div class="success-message">${successMessage}</div>
+                <c:remove var="successMessage" scope="session" />
+            </c:if>
+
+
             <div class="signup-link">
                 Bạn chưa có tài khoản?
                 <a href="${pageContext.request.contextPath}/register">Đăng ký</a>
@@ -157,5 +179,4 @@
         </div>
     </body>
 </html>
-
 

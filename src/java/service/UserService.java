@@ -56,6 +56,11 @@ public class UserService implements IUserService {
         return userDao.getByUsername(username);
     }
 
+    @Override
+    public boolean updatePasswordByEmail(String email, String newPassword) throws SQLException {
+        return userDao.updatePasswordByEmail(email, newPassword);
+    }
+
     public User findOrCreateByGoogleUser(GoogleUser googleUser) {
         User user = userDao.selectUserByEmail(googleUser.getEmail());
         if (user != null) {

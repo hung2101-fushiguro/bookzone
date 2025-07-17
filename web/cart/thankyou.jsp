@@ -279,5 +279,6 @@
             session.removeAttribute("lastOrder");
             session.removeAttribute("lastCart");
         %>
+        <jsp:include page="/footer.jsp" />
     </body>
 </html>

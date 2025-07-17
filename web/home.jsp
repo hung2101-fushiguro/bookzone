@@ -669,9 +669,8 @@
                         <c:set var="cartCount" value="${cartCount + item.quantity}" />
                     </c:forEach>
                 </c:if>
-                <a href="${pageContext.request.contextPath}/offers" class="utility_link">
-                    <strong>Ưu đãi & Tiện ích</strong>
-                </a>
+                
+                
                 <a href="${pageContext.request.contextPath}/cartinformation" class="utility_link">
                     <span class="icon">📦</span> <strong>Đơn hàng</strong>
                 </a>
@@ -845,7 +844,7 @@
         </c:forEach>
 <!--        <a href="${pageContext.request.contextPath}/chat" class="ai-float-button" title="Trợ lý AI tư vấn sách">
             🤖
-        </a>-->-->
+        </a>-->
 
         <!-- Chat button -->
         <div class="ai-chat-button" onclick="toggleChatBox()">🤖</div>
@@ -905,9 +904,7 @@
                 chatBody.scrollTop = chatBody.scrollHeight;
             }
         </script>
-
-
-
+        <jsp:include page="/footer.jsp" />
     </body>
 
 </html>

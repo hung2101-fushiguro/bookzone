@@ -17,6 +17,7 @@ public class UserDao implements IUserDAO {
     private static final String DELETE_USER_BY_ID = "DELETE FROM Users WHERE id = ?";
     private static final String SELECT_BY_USERNAME = "SELECT * FROM Users WHERE username = ?";
     private static final String SELECT_BY_EMAIL = "SELECT * FROM Users WHERE email = ?";
+    private static final String UPDATE_PASSWORD_BY_EMAIL = "UPDATE Users SET password = ? WHERE email = ?";
 
     @Override
     public User checkLogin(String email, String password) {
@@ -198,6 +199,25 @@ public class UserDao implements IUserDAO {
                     t = t.getCause();
                 }
             }
+        }
+    }
+
+    @Override
+    public boolean updatePasswordByEmail(String email, String newPassword) throws SQLException {
+        try (Connection con = DBConnection.getConnection(); PreparedStatement pst = con.prepareStatement(UPDATE_PASSWORD_BY_EMAIL)) {
+
+            pst.setString(1, newPassword);
+            pst.setString(2, email);
+
+            int rowsUpdated = pst.executeUpdate();
+
+            System.out.println(rowsUpdated > 0 ? "Password updated successfully!" : "Password update failed.");
+            return rowsUpdated > 0;
+
+        } catch (SQLException e) {
+            System.out.println("Error in updatePasswordByEmail:");
+            printSQLException(e);
+            return false;
         }
     }
 }

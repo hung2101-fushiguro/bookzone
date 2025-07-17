@@ -156,6 +156,7 @@ public class AccessoryDao implements IAccessoryDAO {
         }
     }
 
+    @Override
     public List<Accessory> selectAccessoriesByPage(int offset, int limit) {
         List<Accessory> accessories = new ArrayList<>();
 
@@ -176,6 +177,7 @@ public class AccessoryDao implements IAccessoryDAO {
         return accessories;
     }
 
+    @Override
     public int getTotalAccessoryCount() {
         int count = 0;
 

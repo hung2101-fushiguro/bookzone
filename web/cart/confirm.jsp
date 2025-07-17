@@ -223,17 +223,18 @@
                                 <td style="padding: 10px; border: 1px solid #ddd;"><fmt:formatNumber value="${item.book.price * item.quantity}" type="number" /> ₫</td>
                             </tr>
                             <c:set var="total" value="${total + (item.book.price * item.quantity)}" />
-                        
 
-                    </c:forEach>
-                    <tr style="font-weight: bold; background-color: #f9f9f9;">
-                        <td colspan="3" style="padding: 10px; text-align: right; border: 1px solid #ddd;">Tổng cộng:</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;"><fmt:formatNumber value="${total}" type="number" /> ₫</td>
-                    </tr>
-                </tbody>
-            </table>
-        </c:if>
 
-    </div>
-</body>
+                        </c:forEach>
+                        <tr style="font-weight: bold; background-color: #f9f9f9;">
+                            <td colspan="3" style="padding: 10px; text-align: right; border: 1px solid #ddd;">Tổng cộng:</td>
+                            <td style="padding: 10px; border: 1px solid #ddd;"><fmt:formatNumber value="${total}" type="number" /> ₫</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </c:if>
+
+        </div>
+        <jsp:include page="/footer.jsp" />
+    </body>
 </html>
