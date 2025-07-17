@@ -23,7 +23,7 @@
 
             .btn {
                 padding: 6px 12px;
-                background: #28a745;
+                background: #4fc3f7;
                 color: white;
                 border: none;
                 border-radius: 4px;
@@ -114,8 +114,13 @@
         <div class="top-bar">
             <!-- Nút thêm sách -->
             <div>
+                <a class="btn" href="${pageContext.request.contextPath}/admin/admin.jsp">⬅ Quay lại</a>
+            </div>
+            <div>
                 <a class="btn" href="${pageContext.request.contextPath}/books?action=create">+ Thêm sách</a>
             </div>
+
+
 
             <!-- Ô tìm kiếm -->
             <form class="search-box" action="${pageContext.request.contextPath}/books" method="get">

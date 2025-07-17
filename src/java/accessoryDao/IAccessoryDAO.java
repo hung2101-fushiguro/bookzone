@@ -7,6 +7,7 @@ package accessoryDao;
 import model.Accessory;
 import java.sql.*;
 import java.util.List;
+import model.AccessoryCategory;
 
 /**
  *
@@ -21,4 +22,14 @@ public interface IAccessoryDAO {
     List<Accessory> getByCategory(int categoryId) throws SQLException;
 
     Accessory getById(int id) throws SQLException;
+
+    void updateAccessory(Accessory accessory) throws SQLException;  // Phương thức update
+
+    void deleteAccessory(int id) throws SQLException;  // Phương thức delete
+
+    List<Accessory> selectAccessoriesByPage(int offset, int limit);
+
+    int getTotalAccessoryCount();
+
+    AccessoryCategory getCategoryByName(String categoryName) throws SQLException;
 }

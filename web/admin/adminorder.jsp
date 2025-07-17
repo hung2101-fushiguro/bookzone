@@ -5,140 +5,168 @@
 <!DOCTYPE html>
 <html>
     <head>
+
         <title>Quản lý đơn hàng</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                background-color: #f8f9fa;
-                padding: 20px;
-            }
+    <div class="top-bar">
+        <!-- Nút thêm sách -->
+        <div>
+            <a class="btn" href="${pageContext.request.contextPath}/admin/admin.jsp">⬅ Quay lại</a>
+        </div>
+    </div>  
+    <style>
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
 
-            h2 {
-                text-align: center;
-                color: #333;
-                margin-bottom: 20px;
-            }
+        .btn {
+            padding: 12px 18px;
+            background-color: #4fc3f7;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 16px;
+            display: inline-block;
+            text-align: center;
+            transition: background-color 0.3s ease, transform 0.2s ease-in-out;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
 
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                background-color: #fff;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
 
-            th, td {
-                border: 1px solid #dee2e6;
-                padding: 12px;
-                text-align: left;
-            }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
 
-            th {
-                background-color: #007bff;
-                color: white;
-            }
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 12px;
+            text-align: left;
+        }
 
-            tr:nth-child(even) {
-                background-color: #f2f2f2;
-            }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
 
-            ul {
-                margin: 0;
-                padding-left: 20px;
-            }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
 
-            li {
-                margin-bottom: 6px;
-            }
+        ul {
+            margin: 0;
+            padding-left: 20px;
+        }
 
-            img {
-                border-radius: 4px;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-            }
+        li {
+            margin-bottom: 6px;
+        }
 
-            select, button {
-                padding: 6px 10px;
-                margin-left: 5px;
-                border-radius: 4px;
-                border: 1px solid #ccc;
-                font-size: 14px;
-            }
+        img {
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
 
-            button {
-                background-color: #28a745;
-                color: white;
-                border: none;
-                cursor: pointer;
-            }
+        select, button {
+            padding: 6px 10px;
+            margin-left: 5px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
 
-            button:hover {
-                background-color: #218838;
-            }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
 
-            select {
-                background-color: #f8f9fa;
-            }
+        button:hover {
+            background-color: #218838;
+        }
 
-            td[colspan="7"] {
-                background-color: #fcfcfc;
-                border-top: none;
-            }
+        select {
+            background-color: #f8f9fa;
+        }
 
-            strong {
-                display: block;
-                margin-bottom: 6px;
-                color: #333;
-            }
-        </style>
-    </head>
-    <body>
-        <h2>Danh sách đơn hàng</h2>
-        <table>
+        td[colspan="7"] {
+            background-color: #fcfcfc;
+            border-top: none;
+        }
+
+        strong {
+            display: block;
+            margin-bottom: 6px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h2>Danh sách đơn hàng</h2>
+    <table>
+        <tr>
+            <th>Mã đơn</th>
+            <th>Người dùng</th>
+            <th>Địa chỉ</th>
+            <th>Giá trị</th>
+            <th>Ngày tạo</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+        </tr>
+        <c:forEach var="order" items="${orders}">
             <tr>
-                <th>Mã đơn</th>
-                <th>Người dùng</th>
-                <th>Địa chỉ</th>
-                <th>Giá trị</th>
-                <th>Ngày tạo</th>
-                <th>Trạng thái</th>
-                <th>Hành động</th>
+                <td>${order.id}</td>
+                <td>${order.userName}</td>
+                <td>${order.address}</td>
+                <td><fmt:formatNumber value="${order.totalPrice}" type="number"/> ₫</td>
+                <td><fmt:formatDate value="${order.createdAt}" pattern="dd/MM/yyyy HH:mm"/></td>
+                <td>${order.status}</td>
+                <td>
+                    <form method="post" action="${pageContext.request.contextPath}/updatestatus">
+                        <input type="hidden" name="orderId" value="${order.id}" />
+                        <select name="status">
+                            <option ${order.status == 'đang xử lý' ? 'selected' : ''}>đang xử lý</option>
+                            <option ${order.status == 'đang vận chuyển' ? 'selected' : ''}>đang vận chuyển</option>
+                            <option ${order.status == 'đã nhận' ? 'selected' : ''}>đã nhận</option>
+                        </select>
+                        <button type="submit">Cập nhật</button>
+                    </form>
+                </td>
             </tr>
-            <c:forEach var="order" items="${orders}">
-                <tr>
-                    <td>${order.id}</td>
-                    <td>${order.userName}</td>
-                    <td>${order.address}</td>
-                    <td><fmt:formatNumber value="${order.totalPrice}" type="number"/> ₫</td>
-                    <td><fmt:formatDate value="${order.createdAt}" pattern="dd/MM/yyyy HH:mm"/></td>
-                    <td>${order.status}</td>
-                    <td>
-                        <form method="post" action="${pageContext.request.contextPath}/updatestatus">
-                            <input type="hidden" name="orderId" value="${order.id}" />
-                            <select name="status">
-                                <option ${order.status == 'đang xử lý' ? 'selected' : ''}>đang xử lý</option>
-                                <option ${order.status == 'đang vận chuyển' ? 'selected' : ''}>đang vận chuyển</option>
-                                <option ${order.status == 'đã nhận' ? 'selected' : ''}>đã nhận</option>
-                            </select>
-                            <button type="submit">Cập nhật</button>
-                        </form>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="7">
-                        <strong>Sách đã đặt:</strong>
-                        <ul>
-                            <c:forEach var="detail" items="${orderDetailsMap[order.id]}">
-                                <li>
-                                    <img src="${detail.bookImage}" width="40" height="60" style="vertical-align: middle;" />
-                                    <span style="margin-left: 10px;">
-                                        ${detail.bookTitle} - SL: ${detail.quantity}, Giá: 
-                                        <fmt:formatNumber value="${detail.price}" type="number" /> ₫
-                                    </span>
-                                </li>
-                            </c:forEach>
-                        </ul>
-                    </td>
-                </tr>
-            </c:forEach>
-        </table>
-    </body>
+            <tr>
+                <td colspan="7">
+                    <strong>Sách đã đặt:</strong>
+                    <ul>
+                        <c:forEach var="detail" items="${orderDetailsMap[order.id]}">
+                            <li>
+                                <img src="${detail.bookImage}" width="40" height="60" style="vertical-align: middle;" />
+                                <span style="margin-left: 10px;">
+                                    ${detail.bookTitle} - SL: ${detail.quantity}, Giá: 
+                                    <fmt:formatNumber value="${detail.price}" type="number" /> ₫
+                                </span>
+                            </li>
+                        </c:forEach>
+                    </ul>
+                </td>
+            </tr>
+        </c:forEach>
+    </table>
+</body>
 </html>

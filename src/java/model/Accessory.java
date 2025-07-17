@@ -9,6 +9,7 @@ package model;
  * @author ADMIN
  */
 public class Accessory {
+
     private int id;
     private String name;
     private String description;
@@ -17,6 +18,7 @@ public class Accessory {
     private String imageUrl;
     private AccessoryCategory category;
     private String createdAt;
+    private String categoryName;
 
     public Accessory() {
     }
@@ -30,6 +32,25 @@ public class Accessory {
         this.imageUrl = imageUrl;
         this.category = category;
         this.createdAt = createdAt;
+    }
+
+    public Accessory(int id, String name, String description, double price, int quantity, String imageUrl, String createdAt, String categoryName) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.quantity = quantity;
+        this.imageUrl = imageUrl;
+        this.createdAt = createdAt;
+        this.categoryName = categoryName;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
     public int getId() {
@@ -100,6 +121,9 @@ public class Accessory {
     public String toString() {
         return "Accessory{" + "id=" + id + ", name=" + name + ", description=" + description + ", price=" + price + ", quantity=" + quantity + ", imageUrl=" + imageUrl + ", category=" + category + ", createdAt=" + createdAt + '}';
     }
-    
-    
+
+    public void setCategoryId(int categoryId) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
 }

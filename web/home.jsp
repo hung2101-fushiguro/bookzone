@@ -702,9 +702,9 @@
             <div class="main_content">
                 <%-- BANNER SLIDER --%>
                 <div class="slider-container-alt">
-                    <div class="slide active"><img src="image/banner1.jpg" alt="Banner 1"></div>
-                    <div class="slide"><img src="image/banner2.jpg" alt="Banner 2"></div>
-                    <div class="slide"><img src="image/banner3.jpg" alt="Banner 3"></div>
+                    <div class="slide active"><img src="image/banner1_3.jpg" alt="Banner 1"></div>
+                    <div class="slide"><img src="image/banner2_1.jpg" alt="Banner 2"></div>
+                    <div class="slide"><img src="image/banner3_1.jpg" alt="Banner 3"></div>
                     <div class="slide"><img src="image/banner4.jpg" alt="Banner 4"></div>
                     <button class="slider-btn-alt prev" onclick="changeSlide(-1)">&#10094;</button>
                     <button class="slider-btn-alt next" onclick="changeSlide(1)">&#10095;</button>
